@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import Spinner from "@/components/ui/Spinner";
 import { LocationProvider } from "@/context/LocationContext";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as Notifications from "expo-notifications";
@@ -47,7 +48,7 @@ const InitialLayout = () => {
   }, [fontsLoaded, isCheckingAuth]);
 
   if (!fontsLoaded || isCheckingAuth) {
-    return null;
+    return <Spinner isVisible={true} />;
   }
 
   return (

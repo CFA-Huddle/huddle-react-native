@@ -6,18 +6,17 @@ import { Apercu, Colors } from "@/constants/theme";
 import { useLogin } from "@/hooks/useAuth";
 import { isValidEmail } from "@/utils/string";
 import * as Haptics from "expo-haptics";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Keyboard, StyleSheet, Text, View } from "react-native";
 
-type LoginFormValues = {
+export type LoginFormValues = {
   email: string;
   password: string;
 };
 
 const LoginForm = () => {
-  const router = useRouter();
   const { mutate: login, isPending } = useLogin();
   const [error, setError] = useState("");
 
@@ -25,12 +24,15 @@ const LoginForm = () => {
     control,
     handleSubmit,
     clearErrors,
+    watch,
     setError: setFieldError,
     formState: { isValid, errors, isDirty },
   } = useForm<LoginFormValues>({
     defaultValues: { email: "", password: "" },
     reValidateMode: "onSubmit",
   });
+
+  const email = watch("email");
 
   const onSubmit = ({ email, password }: LoginFormValues) => {
     Keyboard.dismiss();
@@ -70,7 +72,14 @@ const LoginForm = () => {
     );
   };
 
-  const handleForgotPassword = () => {};
+  const handleForgotPassword = () => {
+    router.replace({
+      pathname: "/reset-password",
+      params: {
+        email: email,
+      },
+    });
+  };
 
   return (
     <>

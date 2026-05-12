@@ -1,6 +1,4 @@
-import AuthBackground from "@/components/auth/AuthBackground";
 import LoginForm from "@/components/auth/LoginForm";
-import React from "react";
 import {
   Keyboard,
   Platform,
@@ -14,15 +12,13 @@ const LoginScreen = () => {
   const offset = { closed: 0, opened: Platform.OS === "ios" ? 20 : 20 };
 
   return (
-    <AuthBackground>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardStickyView offset={offset} style={styles.footerContainer}>
-          <View style={styles.formContainer}>
-            <LoginForm />
-          </View>
-        </KeyboardStickyView>
-      </TouchableWithoutFeedback>
-    </AuthBackground>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardStickyView offset={offset} style={styles.footerContainer}>
+        <View style={styles.formContainer}>
+          <LoginForm />
+        </View>
+      </KeyboardStickyView>
+    </TouchableWithoutFeedback>
   );
 };
 

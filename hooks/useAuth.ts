@@ -12,6 +12,12 @@ interface LoginNewPasswordCredentials {
   newPassword: string;
 }
 
+interface ConfirmResetPasswordCredentials {
+  confirmationCode: string;
+  email: string;
+  newPassword: string;
+}
+
 export function useLogin() {
   const { setIsLoggedIn, setUser } = useAuthContext();
 
@@ -63,5 +69,22 @@ export function useLogout() {
       setUser(null);
       setIsLoggedIn(false);
     },
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (email: string) => authService.resetPassword(email),
+  });
+}
+
+export function useConfirmResetPassword() {
+  return useMutation({
+    mutationFn: ({
+      confirmationCode,
+      email,
+      newPassword,
+    }: ConfirmResetPasswordCredentials) =>
+      authService.confirmResetPassword(confirmationCode, email, newPassword),
   });
 }

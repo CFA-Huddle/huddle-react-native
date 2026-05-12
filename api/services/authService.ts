@@ -1,8 +1,10 @@
 import {
+  confirmResetPassword,
   confirmSignIn,
   fetchAuthSession,
   fetchUserAttributes,
   getCurrentUser,
+  resetPassword,
   signIn,
   signOut,
   updateUserAttributes,
@@ -42,7 +44,29 @@ export const authService = {
       return null;
     }
   },
-  updateUserAttributes: async (firstName: string | undefined, lastName: string | undefined, email: string | undefined, profilePicture: string | undefined = undefined) => {
+  resetPassword: async (email: string) => {
+    const { nextStep } = await resetPassword({
+      username: email,
+    });
+    return { nextStep };
+  },
+  confirmResetPassword: async (
+    confirmationCode: string,
+    email: string,
+    newPassword: string,
+  ) => {
+    await confirmResetPassword({
+      confirmationCode: confirmationCode,
+      username: email,
+      newPassword: newPassword,
+    });
+  },
+  updateUserAttributes: async (
+    firstName: string | undefined,
+    lastName: string | undefined,
+    email: string | undefined,
+    profilePicture: string | undefined = undefined,
+  ) => {
     let userAttributes: Record<string, string> = {};
     if (firstName) {
       userAttributes.given_name = firstName;
