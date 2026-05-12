@@ -1,51 +1,70 @@
+import { LoginFormValues } from "@/components/auth/LoginForm";
 import ErrorModal from "@/components/shared/ErrorModal";
 import Button from "@/components/ui/Button";
 import Spinner from "@/components/ui/Spinner";
 import TextField from "@/components/ui/TextField";
 import { Apercu, Colors } from "@/constants/theme";
-import { useLoginNewPassword } from "@/hooks/useAuth";
+import { useConfirmResetPassword, useLogin } from "@/hooks/useAuth";
 import * as Haptics from "expo-haptics";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Keyboard, StyleSheet, Text, View } from "react-native";
 
-type NewPasswordLoginFormValues = {
+type ConfirmResetPasswordFormValues = {
+  confirmationCode: string;
   newPassword: string;
   repeatedNewPassword: string;
 };
 
-const NewPasswordLoginForm = () => {
+const ConfirmResetPasswordForm = () => {
   const router = useRouter();
-  const { mutate: login, isPending } = useLoginNewPassword();
+  const { mutate: confirmResetPassword, isPending: isPendingResetPassword } =
+    useConfirmResetPassword();
+  const { mutate: login, isPending: isPendingLogin } = useLogin();
   const [error, setError] = useState("");
+
+  const isPending = isPendingResetPassword || isPendingLogin;
+
+  const { email } = useLocalSearchParams<{
+    email: string;
+  }>();
 
   const {
     control,
     handleSubmit,
-    getValues,
     setError: setFieldError,
+    getValues,
     clearErrors,
-    formState: { isValid, errors, isDirty },
-  } = useForm<NewPasswordLoginFormValues>({
-    defaultValues: { newPassword: "", repeatedNewPassword: "" },
+    formState: { isValid, errors },
+  } = useForm<ConfirmResetPasswordFormValues>({
+    defaultValues: {
+      confirmationCode: "",
+      newPassword: "",
+      repeatedNewPassword: "",
+    },
     reValidateMode: "onSubmit",
   });
 
   const onSubmit = ({
+    confirmationCode,
     newPassword,
-    repeatedNewPassword,
-  }: NewPasswordLoginFormValues) => {
+  }: ConfirmResetPasswordFormValues) => {
     Keyboard.dismiss();
-    login(
-      { newPassword },
+    confirmResetPassword(
+      { confirmationCode, newPassword, email },
       {
         onSuccess: () => {
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          loginUser({ email, password: newPassword });
         },
         onError: (error: Error) => {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
           switch (error.name) {
+            case "CodeMismatchException":
+              setFieldError("confirmationCode", {
+                message: error.message,
+              });
+              break;
             case "InvalidPasswordException":
               setFieldError("newPassword", {
                 message: error.message.replace(
@@ -64,8 +83,29 @@ const NewPasswordLoginForm = () => {
     );
   };
 
+  const loginUser = ({ email, password }: LoginFormValues) => {
+    login(
+      { email, password },
+      {
+        onSuccess: ({ nextStep }) => {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          if (
+            nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED"
+          ) {
+            router.navigate("/new-password");
+          }
+        },
+        onError: (error: Error) => {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+          setError(error.name);
+          console.log(error);
+        },
+      },
+    );
+  };
+
   const handleGoBack = () => {
-    router.back();
+    router.replace("/(auth)/reset-password");
   };
 
   return (
@@ -77,9 +117,35 @@ const NewPasswordLoginForm = () => {
         onClose={() => setError("")}
       />
       <View style={styles.container}>
-        <Text style={styles.title}>Welcome!</Text>
-        <Text style={styles.subtitle}>Let’s create a new password for you</Text>
+        <Text style={styles.title}>Check your email</Text>
+        <Text style={styles.subtitle}>
+          We sent a recovery code to your email address. Enter the code below to
+          reset your password.
+        </Text>
         <View>
+          <Controller
+            control={control}
+            name="confirmationCode"
+            rules={{
+              required: "Confirmation code is required",
+            }}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                label="Verification Code"
+                placeholder="Enter your 6-digit verification code"
+                value={value}
+                onChangeText={(text) => {
+                  onChange(text);
+                  if (errors.confirmationCode) {
+                    clearErrors("confirmationCode");
+                  }
+                }}
+                error={errors.confirmationCode?.message}
+                textContentType="oneTimeCode"
+                autoComplete="one-time-code"
+              />
+            )}
+          />
           <Controller
             control={control}
             name="newPassword"
@@ -97,7 +163,6 @@ const NewPasswordLoginForm = () => {
                 }}
                 error={errors.newPassword?.message}
                 textContentType="password"
-                autoCorrect={false}
                 autoComplete="password"
                 secureTextEntry={true}
               />
@@ -124,7 +189,6 @@ const NewPasswordLoginForm = () => {
                 }}
                 error={errors.newPassword?.message}
                 textContentType="password"
-                autoCorrect={false}
                 autoComplete="password-new"
                 secureTextEntry={true}
               />
@@ -133,8 +197,8 @@ const NewPasswordLoginForm = () => {
         </View>
         <View style={styles.buttonGroup}>
           <Button
-            text="Continue"
-            disabled={!isDirty || isPending || !isValid}
+            text="Reset Password"
+            disabled={isPending || !isValid}
             onPress={handleSubmit(onSubmit)}
           />
           <Button text="Go Back" variant="secondary" onPress={handleGoBack} />
@@ -166,4 +230,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NewPasswordLoginForm;
+export default ConfirmResetPasswordForm;

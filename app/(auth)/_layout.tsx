@@ -15,12 +15,14 @@ export default function AuthLayout() {
           contentStyle: {
             backgroundColor: "transparent",
           },
+          animationTypeForReplace: "pop",
           animation: "fade_from_bottom",
           animationDuration: 200,
         }}
       >
         <Stack.Screen name="index" />
         <Stack.Screen name="new-password" />
+        <Stack.Screen name="reset-password" />
       </Stack>
     </ImageBackground>
   );

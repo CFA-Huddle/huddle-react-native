@@ -1,8 +1,10 @@
 import {
+  confirmResetPassword,
   confirmSignIn,
   fetchAuthSession,
   fetchUserAttributes,
   getCurrentUser,
+  resetPassword,
   signIn,
   signOut,
 } from "aws-amplify/auth";
@@ -40,5 +42,22 @@ export const authService = {
     } catch {
       return null;
     }
+  },
+  resetPassword: async (email: string) => {
+    const { nextStep } = await resetPassword({
+      username: email,
+    });
+    return { nextStep };
+  },
+  confirmResetPassword: async (
+    confirmationCode: string,
+    email: string,
+    newPassword: string,
+  ) => {
+    await confirmResetPassword({
+      confirmationCode: confirmationCode,
+      username: email,
+      newPassword: newPassword,
+    });
   },
 };

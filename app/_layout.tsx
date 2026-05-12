@@ -12,6 +12,7 @@ import React, { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import Spinner from "@/components/ui/Spinner";
 import * as Notifications from "expo-notifications";
 
 Notifications.setNotificationHandler({
@@ -45,8 +46,8 @@ const InitialLayout = () => {
     }
   }, [fontsLoaded, isCheckingAuth, isLoading]);
 
-  if (!fontsLoaded || isCheckingAuth) {
-    return null;
+  if (!fontsLoaded || isCheckingAuth || isLoading) {
+    return <Spinner isVisible={true} />;
   }
 
   return (
