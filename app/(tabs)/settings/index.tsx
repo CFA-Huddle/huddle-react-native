@@ -11,7 +11,7 @@ import { RoleLabels } from "@/types/Membership";
 import { getHighestRole } from "@/utils/roles";
 import { router } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SettingsScreen = () => {
@@ -25,12 +25,18 @@ const SettingsScreen = () => {
     <>
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <Heading>Your Profile</Heading>
-        <ProfileCard
-          name={fullName}
-          role={topRole ? RoleLabels[topRole] : ""}
-          locations={locationIds}
-          avatarUrl={user?.picture}
-        />
+        <TouchableOpacity
+          onPress={() => router.navigate("/settings/account-information")}
+          activeOpacity={0.6}
+        >
+          <ProfileCard
+            name={fullName}
+            role={topRole ? RoleLabels[topRole] : ""}
+            locations={locationIds}
+            avatarUrl={user?.picture}
+          />
+        </TouchableOpacity>
+
         <SubHeading>Settings</SubHeading>
         <View style={styles.settingsButtonsContainer}>
           <TouchableCard onPress={() => router.navigate("/settings/account-information")} activeOpacity={0.6}>
