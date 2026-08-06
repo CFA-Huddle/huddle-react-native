@@ -21,6 +21,32 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "fweinhardt@icloud.com",
+        "ascAppId": "6766762591",
+        "appleTeamId": "AVS62V4S24",
+        "sku": "EX1778042582164",
+        "bundleIdentifier": "com.timweinhardt.huddlereactnative"
+      }
+    },
+    "preview": {
+      "ios": {
+        "appleId": "fweinhardt@icloud.com",
+        "ascAppId": "6766762591",
+        "appleTeamId": "AVS62V4S24",
+        "sku": "EX1778042582164",
+        "bundleIdentifier": "com.timweinhardt.huddlereactnative"
+      }
+    },
+    "development": {
+      "ios": {
+        "appleId": "fweinhardt@icloud.com",
+        "ascAppId": "6766762591",
+        "appleTeamId": "AVS62V4S24",
+        "sku": "EX1778042582164",
+        "bundleIdentifier": "com.timweinhardt.huddlereactnative"
+      }
+    }
   }
 }
