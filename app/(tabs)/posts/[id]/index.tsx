@@ -4,11 +4,12 @@ import Avatar from "@/components/shared/Avatar";
 import ErrorModal from "@/components/shared/ErrorModal";
 import Button from "@/components/ui/Button";
 import { Colors, TextStyles } from "@/constants/theme";
+import { useLocationContext } from "@/context/LocationContext";
 import { useLocationUser } from "@/hooks/useLocationUsers";
 import { usePost } from "@/hooks/usePost";
 import { formatLongDateTime } from "@/utils/string";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   RefreshControl,
   ScrollView,
@@ -25,7 +26,10 @@ const PostScreen = () => {
 
   const { data: post, error, isLoading, isRefetching, refetch } = usePost(id);
 
-  const { fullName: authorName } = useLocationUser("30023", post?.author_id);
+  const { selectedLocation } = useLocationContext();
+  if (!selectedLocation) return null;
+  
+  const { fullName: authorName } = useLocationUser(selectedLocation, post?.author_id);
 
   const [isErrorVisible, setIsErrorVisible] = useState(false);
 

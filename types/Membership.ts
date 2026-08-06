@@ -26,3 +26,12 @@ export interface UserMembership {
   location_id: string;
   roles: Role[];
 }
+
+export interface GetMembershipsByUserId {
+  memberships: UserMembership[];
+}
+
+export interface UserMembershipResponse {
+  user_id: string;
+  memberships: UserMembership[];
+}

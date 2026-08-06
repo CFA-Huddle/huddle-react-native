@@ -24,6 +24,7 @@ export const Colors = {
   textSecondary: "#5B6871",
   textMuted: "#9AA5AC",
   textInverse: "#FFFFFF",
+  headerBackground: "#FFFFFF",
 };
 
 export const Fonts = Platform.select({

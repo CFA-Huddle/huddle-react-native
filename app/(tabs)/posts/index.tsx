@@ -4,6 +4,7 @@ import ErrorModal from "@/components/shared/ErrorModal";
 import Heading from "@/components/shared/Heading";
 import Button from "@/components/ui/Button";
 import { Colors } from "@/constants/theme";
+import { useLocationContext } from "@/context/LocationContext";
 import { useLocationUsers } from "@/hooks/useLocationUsers";
 import { usePosts } from "@/hooks/usePosts";
 import { router } from "expo-router";
@@ -13,7 +14,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
-
+  const { selectedLocation } = useLocationContext();
+  if (!selectedLocation) return null;
+  
   const {
     data: posts,
     error,
@@ -21,11 +24,11 @@ const HomeScreen = () => {
     isRefetching,
     isPending,
     isLoading,
-  } = usePosts("30023");
+  } = usePosts(selectedLocation);
 
   const [isErrorVisible, setIsErrorVisible] = useState(false);
 
-  const { data: users, isLoading: isUsersLoading } = useLocationUsers("30023");
+  const { data: users, isLoading: isUsersLoading } = useLocationUsers(selectedLocation);
 
   const userMap = React.useMemo(() => {
     if (!users) return {};

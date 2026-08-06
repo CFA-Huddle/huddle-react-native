@@ -4,7 +4,6 @@ import "react-native-reanimated";
 
 import { CustomFonts } from "@/constants/theme";
 import { AuthProvider, useAuthContext } from "@/context/AuthContext";
-import { useLocationUsers } from "@/hooks/useLocationUsers";
 import { queryClient } from "@/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Amplify } from "aws-amplify";
@@ -12,6 +11,7 @@ import React, { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { LocationProvider } from "@/context/LocationContext";
 import * as Notifications from "expo-notifications";
 
 Notifications.setNotificationHandler({
@@ -37,13 +37,12 @@ SplashScreen.preventAutoHideAsync();
 const InitialLayout = () => {
   const [fontsLoaded] = useFonts(CustomFonts);
   const { isCheckingAuth, isLoggedIn } = useAuthContext();
-  const { isLoading } = useLocationUsers("30023");
 
   useEffect(() => {
-    if (fontsLoaded && !isCheckingAuth && !isLoading) {
+    if (fontsLoaded && !isCheckingAuth) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, isCheckingAuth, isLoading]);
+  }, [fontsLoaded, isCheckingAuth]);
 
   if (!fontsLoaded || isCheckingAuth) {
     return null;
@@ -66,11 +65,13 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <KeyboardProvider>
-          <SafeAreaProvider>
-            <InitialLayout />
-          </SafeAreaProvider>
-        </KeyboardProvider>
+        <LocationProvider>
+          <KeyboardProvider>
+            <SafeAreaProvider>
+              <InitialLayout />
+            </SafeAreaProvider>
+          </KeyboardProvider>
+        </LocationProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

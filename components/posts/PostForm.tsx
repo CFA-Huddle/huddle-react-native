@@ -4,6 +4,7 @@ import Button from "@/components/ui/Button";
 import Spinner from "@/components/ui/Spinner";
 import TextField from "@/components/ui/TextField";
 import { Apercu, Colors } from "@/constants/theme";
+import { useLocationContext } from "@/context/LocationContext";
 import { useCreatePost } from "@/hooks/useCreatePost";
 import { usePost } from "@/hooks/usePost";
 import { useUpdatePost } from "@/hooks/useUpdatePost";
@@ -12,8 +13,8 @@ import React, { useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Keyboard, StyleSheet, Text } from "react-native";
 import {
-    KeyboardAwareScrollView,
-    KeyboardAwareScrollViewRef,
+  KeyboardAwareScrollView,
+  KeyboardAwareScrollViewRef,
 } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -28,6 +29,9 @@ type FormValues = {
 };
 
 const PostForm: React.FC<Props> = ({ postId, mode }) => {
+  const { selectedLocation } = useLocationContext();
+  if (!selectedLocation) return null;
+
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<KeyboardAwareScrollViewRef>(null);
   const isEditing = mode === "edit";
@@ -83,7 +87,7 @@ const PostForm: React.FC<Props> = ({ postId, mode }) => {
     } else {
       create.mutate(
         {
-          location_id: "30023",
+          location_id: selectedLocation,
           title: data.title,
           content: data.message,
         },
