@@ -1,4 +1,5 @@
 import { membershipService } from "@/api/services/membershipService";
+import { getPreference, savePreference } from "@/utils/preferences";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuthContext } from "./AuthContext";
 
@@ -19,7 +20,7 @@ const LocationContext = createContext<LocationContextType>({
 // choose first location from user's memberships
 export const LocationProvider = ({ children }: { children: React.ReactNode }) => {
     const { user } = useAuthContext();
-    const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+    const [selectedLocation, setSelectedLocation] = useState<string | null>("Loading...");
     const [locations, setLocations] = useState<string[]>([]);
 
     useEffect(() => {
@@ -27,11 +28,18 @@ export const LocationProvider = ({ children }: { children: React.ReactNode }) =>
             const userID = user?.sub;
             if (!userID) return;
             const memberships = await membershipService.getMembershipsByUserId(userID);
-            setSelectedLocation(memberships[0]?.location_id ?? null);
+            const savedLocation = await getPreference("selectedLocation");
+            setSelectedLocation(savedLocation ?? memberships[0]?.location_id ?? null);
             setLocations(memberships.map((membership) => membership.location_id));
         }
         initializeLocation();
     }, [user]);
+
+    useEffect(() => {
+        if (selectedLocation && selectedLocation !== "Loading...") {
+            savePreference("selectedLocation", selectedLocation);
+        }
+    }, [selectedLocation]);
 
     return <LocationContext.Provider value={{ selectedLocation, setSelectedLocation, locations, setLocations }}>{children}</LocationContext.Provider>;
 };
