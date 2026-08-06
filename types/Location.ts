@@ -1,7 +1,6 @@
 export const LocationLabels: Record<string, string> = {
-    "30003": "Kitchener",
-    "30023": "Cambridge Centre",
-    "30040": "Newmarket East",
-    "30005": "Devonshire",
-    "Loading...": "Loading Locations...",
+    "30003": "Kitchener FSU",
+    "30023": "Cambridge Centre FSU",
+    "30040": "Newmarket East FSU",
+    "30005": "Devonshire FSU",
 };

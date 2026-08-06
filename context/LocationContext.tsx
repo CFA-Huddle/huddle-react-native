@@ -20,7 +20,7 @@ const LocationContext = createContext<LocationContextType>({
 // choose first location from user's memberships
 export const LocationProvider = ({ children }: { children: React.ReactNode }) => {
     const { user } = useAuthContext();
-    const [selectedLocation, setSelectedLocation] = useState<string | null>("Loading...");
+    const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
     const [locations, setLocations] = useState<string[]>([]);
 
     useEffect(() => {
@@ -36,7 +36,7 @@ export const LocationProvider = ({ children }: { children: React.ReactNode }) =>
     }, [user]);
 
     useEffect(() => {
-        if (selectedLocation && selectedLocation !== "Loading...") {
+        if (selectedLocation) {
             savePreference("selectedLocation", selectedLocation);
         }
     }, [selectedLocation]);

@@ -29,6 +29,7 @@ const LocationHeader: React.FC<LocationHeaderProps> = ({ location, style }) => {
 
 const styles = StyleSheet.create({
     locationContainer: {
+        width: "100%",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
