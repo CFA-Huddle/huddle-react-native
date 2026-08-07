@@ -64,6 +64,7 @@ interface ButtonProps {
   text: string;
   variant?: keyof typeof VARIANT_CONFIG;
   disabled?: boolean;
+  iconSize?: number;
   iconLeft?: React.FC<SvgProps>;
   iconRight?: React.FC<SvgProps>;
   onPress: () => void;
@@ -89,6 +90,7 @@ const Button: React.FC<ButtonProps> = ({
   text,
   variant = "primary",
   disabled = false,
+  iconSize = 16,
   iconLeft: IconLeft,
   iconRight: IconRight,
   onPress,
@@ -116,9 +118,9 @@ const Button: React.FC<ButtonProps> = ({
       ]}
     >
       <ContentWrapper style={[styles.content, contentStyle]}>
-        {IconLeft && <IconLeft color={contentColor} />}
+        {IconLeft && <IconLeft color={contentColor} width={iconSize} height={iconSize} />}
         <Text style={[styles.text, { color: contentColor }]}>{text}</Text>
-        {IconRight && <IconRight color={contentColor} />}
+        {IconRight && <IconRight color={contentColor} width={iconSize} height={iconSize} />}
       </ContentWrapper>
     </TouchableOpacity>
   );

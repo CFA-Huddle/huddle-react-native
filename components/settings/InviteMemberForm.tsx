@@ -99,7 +99,7 @@ const InviteMemberForm = () => {
                         variant="transparent"
                         iconLeft={ChevronLeftIcon}
                     />
-                    <RouteHeading>Invite Member</RouteHeading>
+                    <RouteHeading>Invite Team Member</RouteHeading>
                     <Text style={[TextStyles.largeLabel, styles.label]}>First Name</Text>
                     <Controller
                         control={control}
@@ -189,7 +189,7 @@ const InviteMemberForm = () => {
                 </View>
                 <Button
                     variant="primary"
-                    text="Invite Member"
+                    text="Send Invitation"
                     onPress={handleSubmit(onSubmit)}
                     style={styles.updateProfileButton}
                 />

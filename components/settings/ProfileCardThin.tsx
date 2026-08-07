@@ -1,11 +1,12 @@
 import Avatar from "@/components/shared/Avatar";
 import Card from "@/components/ui/Card";
-import { TextStyles } from "@/constants/theme";
+import { Colors, TextStyles } from "@/constants/theme";
 import React from "react";
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 interface ProfileCardProps {
   name: string;
+  isYourself: boolean;
   avatarUrl?: string;
   locations: string[];
   role: string;
@@ -14,6 +15,7 @@ interface ProfileCardProps {
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
   name,
+  isYourself,
   avatarUrl,
   locations,
   role,
@@ -26,6 +28,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         <View style={styles.nameContainer}>
           <Text style={styles.name} numberOfLines={1}>
             {name}
+            {isYourself && <Text style={styles.yourself}> (You)</Text>}
           </Text>
           <Text style={styles.role}>{role}</Text>
         </View>
@@ -53,6 +56,11 @@ const styles = StyleSheet.create({
   },
   footer: {
     gap: 4,
+  },
+  yourself: {
+    fontFamily: TextStyles.body.fontFamily,
+    fontSize: TextStyles.title.fontSize,
+    color: Colors.muted,
   },
   name: {
     fontFamily: TextStyles.title.fontFamily,

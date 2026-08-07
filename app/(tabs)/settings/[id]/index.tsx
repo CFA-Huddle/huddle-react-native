@@ -1,12 +1,13 @@
 import { userService } from "@/api/services/userService";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
+import EditIcon from "@/assets/icons/edit.svg";
 import RolesModal from "@/components/settings/RolesModal";
 import ActionModal from "@/components/shared/ActionModal";
 import Avatar from "@/components/shared/Avatar";
 import ErrorModal from "@/components/shared/ErrorModal";
 import Button from "@/components/ui/Button";
 import Spinner from "@/components/ui/Spinner";
-import { TextStyles } from "@/constants/theme";
+import { Colors, TextStyles } from "@/constants/theme";
 import { useAuthContext } from "@/context/AuthContext";
 import { useDeleteMembership } from "@/hooks/useDeleteMembership";
 import { locationUsersKey, useLocationUser } from "@/hooks/useLocationUsers";
@@ -18,8 +19,8 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
+import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 
 
 const ProfileDetailsScreen = () => {
@@ -29,6 +30,7 @@ const ProfileDetailsScreen = () => {
     const isOwner = authUser?.sub === id;
     const user: LocationUser = useLocationUser("30023", id);
     const insets = useSafeAreaInsets();
+    const styles = createStyles(insets);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [selectedRole, setSelectedRole] = useState<Role>(Role.TEAM_MEMBER);
@@ -105,7 +107,7 @@ const ProfileDetailsScreen = () => {
                 visible={!!error}
                 onClose={() => setError("")}
             />
-            <View style={{ paddingTop: insets.top }}>
+            <View style={[styles.main]}>
                 <Button
                     text="Back"
                     onPress={handleBackButton}
@@ -115,19 +117,22 @@ const ProfileDetailsScreen = () => {
                     iconLeft={ChevronLeftIcon}
                 />
                 <View style={styles.contentContainer}>
-
                     <View style={styles.userInfoContainer}>
                         <Avatar avatarUrl={user.user?.avatar_url ?? undefined} size={128} />
                         <View style={styles.userInfoTextContainer}>
                             <Text style={styles.userName}>{user.fullName}</Text>
-                            <Text style={styles.userEmail}>{user.user?.email}</Text>
                         </View>
                         <Text style={styles.userRole}> {user.roles?.map((role) => RoleLabels[role] ?? role).join(", ")}</Text>
+                        <Pressable style={styles.userEmailContainer} onPress={() => Linking.openURL(`mailto:${user.user?.email}`)}>
+                            <Text style={styles.userEmailLabel}>Email Address</Text>
+                            <Text style={styles.userEmailText}>{user.user?.email}</Text>
+                        </Pressable>
                     </View>
                     <View style={styles.buttonsContainer}>
                         <Button
                             variant="secondary"
-                            text="Edit Profile"
+                            text="Edit Account Information"
+                            iconLeft={EditIcon}
                             onPress={handleEditProfile}
                         />
                         <Button
@@ -138,7 +143,7 @@ const ProfileDetailsScreen = () => {
                         <Button
                             disabled={isOwner}
                             variant="primary"
-                            text="Remove from Team"
+                            text="Delete Team Member"
                             onPress={() => setIsDeleteModalOpen(true)}
                         />
                     </View>
@@ -148,38 +153,51 @@ const ProfileDetailsScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (insets: EdgeInsets) => StyleSheet.create({
+    container: {
+        paddingHorizontal: 20,
+        flex: 1,
+    },
+    main: {
+        flex: 1,
+        paddingTop: insets.top,
+    },
     contentContainer: {
-        gap: 32,
+        flex: 1,
+        justifyContent: "space-between",
+        paddingBottom: 20,
     },
     buttonsContainer: {
         gap: 12,
     },
+    userEmailContainer: {
+        gap: 2,
+        marginTop: 16,
+        backgroundColor: Colors.card,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 8,
+        width: "100%",
+    },
+    userEmailLabel: {
+        fontFamily: TextStyles.body.fontFamily,
+        fontSize: TextStyles.label.fontSize,
+        color: Colors.muted,
+    },
+    userEmailText: {
+        fontFamily: TextStyles.body.fontFamily,
+        fontSize: TextStyles.subTitle.fontSize,
+        color: TextStyles.subTitle.color,
+    },
     userInfoContainer: {
         justifyContent: "center",
         alignItems: "center",
-        gap: 16,
+        gap: 8,
     },
     userInfoTextContainer: {
         alignItems: "center",
         justifyContent: "center",
         gap: 2,
-    },
-    userRoleLocationContainer: {
-        flexDirection: "row",
-        gap: 12,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    userLocationSeparator: {
-        fontFamily: TextStyles.subTitle.fontFamily,
-        fontSize: TextStyles.subTitle.fontSize,
-        color: TextStyles.subTitle.color,
-    },
-    userLocation: {
-        fontFamily: TextStyles.subTitle.fontFamily,
-        fontSize: TextStyles.subTitle.fontSize,
-        color: TextStyles.subTitle.color,
     },
     userRole: {
         fontFamily: TextStyles.subTitle.fontFamily,
@@ -191,37 +209,6 @@ const styles = StyleSheet.create({
         fontSize: TextStyles.heading.fontSize,
         color: TextStyles.heading.color,
     },
-    userEmail: {
-        fontFamily: TextStyles.body.fontFamily,
-        fontSize: TextStyles.body.fontSize,
-        color: TextStyles.body.color,
-    },
-    container: {
-        paddingHorizontal: 20,
-        paddingBottom: 20,
-        flex: 1,
-        justifyContent: "space-between",
-        flexDirection: "column",
-        height: "100%",
-    },
-    textFieldContainer: {
-        padding: 16,
-    },
-    emailText: {
-        maxWidth: "70%",
-    },
-    footer: {
-        padding: 20,
-        flexDirection: "row",
-    },
-    buttonText: {
-        fontFamily: TextStyles.body.fontFamily,
-        fontSize: TextStyles.body.fontSize,
-        color: TextStyles.body.color,
-    },
-    changeButton: {
-        alignSelf: "flex-end",
-    },
     backButton: {
         marginTop: 30,
         alignSelf: "flex-start",
@@ -229,21 +216,6 @@ const styles = StyleSheet.create({
     },
     backButtonContent: {
         paddingLeft: 0,
-    },
-    label: {
-        marginBottom: 6,
-    },
-    textField: {
-        fontFamily: TextStyles.body.fontFamily,
-        fontSize: TextStyles.body.fontSize,
-        color: TextStyles.body.color,
-    },
-    emailCard: {
-        padding: 16,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 16,
     },
 });
 

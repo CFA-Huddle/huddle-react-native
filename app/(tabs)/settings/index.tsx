@@ -7,10 +7,9 @@ import TouchableCard from "@/components/ui/TouchableCard";
 import { TextStyles } from "@/constants/theme";
 import { useAuthContext } from "@/context/AuthContext";
 import { useLocationUser } from "@/hooks/useLocationUsers";
-import { RoleLabels } from "@/types/Membership";
+import { AuthorizedRoles, Role, RoleLabels } from "@/types/Membership";
 import { getHighestRole } from "@/utils/roles";
 import { router } from "expo-router";
-import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -21,6 +20,8 @@ const SettingsScreen = () => {
 
   const fullName = `${user?.given_name ?? ""} ${user?.family_name ?? ""}`;
   const topRole = getHighestRole(userRoles ?? []);
+  const isAuthorized = AuthorizedRoles.includes(topRole ?? Role.TEAM_MEMBER);
+
   return (
     <>
       <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -42,11 +43,19 @@ const SettingsScreen = () => {
           <TouchableCard onPress={() => router.navigate("/settings/account-information")} activeOpacity={0.6}>
             <Text style={styles.buttonText}>Account Information</Text>
           </TouchableCard>
-          <TouchableCard onPress={() => router.navigate("/settings/team-management")} activeOpacity={0.6}>
-            <Text style={styles.buttonText}>Team Management</Text>
-          </TouchableCard>
           <ClearCacheButton />
         </View>
+        {isAuthorized && (
+          <>
+            <SubHeading>Location</SubHeading>
+            <View style={styles.settingsButtonsContainer}>
+              <TouchableCard onPress={() => router.navigate("/settings/team-management")} activeOpacity={0.6}>
+                <Text style={styles.buttonText}>Team Members</Text>
+              </TouchableCard>
+            </View>
+          </>
+        )}
+
       </View>
       <View style={styles.footer}>
         <LogoutButton />
@@ -62,6 +71,7 @@ const styles = StyleSheet.create({
   },
   settingsButtonsContainer: {
     gap: 10,
+    marginBottom: 20
   },
   footer: {
     padding: 20,

@@ -7,6 +7,7 @@ import { Platform } from "react-native";
 
 export const Colors = {
   background: "#F7F7F7",
+  darkBackground: "#e3e3e3",
   primary: "#DD0033",
   gradientStart: "#FF033B",
   gradientEnd: "#CA0F1A",
@@ -76,7 +77,7 @@ export const TextStyles = {
     color: Colors.textPrimary,
   },
   subHeading: {
-    fontFamily: Apercu.bold,
+    fontFamily: Apercu.medium,
     fontSize: 20,
     color: Colors.textSecondary,
   },

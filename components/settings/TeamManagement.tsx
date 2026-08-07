@@ -1,4 +1,7 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
+import CloseIcon from "@/assets/icons/close-outline.svg";
+import PlusIcon from "@/assets/icons/plus.svg";
+import SearchIcon from "@/assets/icons/search.svg";
 import ProfileCardThin from "@/components/settings/ProfileCardThin";
 import ErrorModal from "@/components/shared/ErrorModal";
 import RouteHeading from "@/components/shared/RouteHeading";
@@ -6,14 +9,14 @@ import SubHeading from "@/components/shared/SubHeading";
 import Button from "@/components/ui/Button";
 import Spinner from "@/components/ui/Spinner";
 import { Colors, TextStyles } from "@/constants/theme";
+import { useAuthContext } from "@/context/AuthContext";
 import { useLocationUsers } from "@/hooks/useLocationUsers";
 import { RoleLabels } from "@/types/Membership";
 import { router } from "expo-router";
-import { useState } from "react";
-import { RefreshControl, SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useMemo, useState } from "react";
+import { Pressable, RefreshControl, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import PlusIcon from "@/assets/icons/plus.svg";
 
 const TeamManagement = () => {
     const insets = useSafeAreaInsets();
@@ -21,7 +24,8 @@ const TeamManagement = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const { data: users, isLoading: isUsersLoading, refetch, isRefetching } = useLocationUsers("30023");
-
+    const { user } = useAuthContext();
+    const [search, setSearch] = useState("");
     const activeUsers = users?.filter((user) => user.is_active && user.is_confirmed) ?? [];
     const invitedUsers = users?.filter((user) => user.is_active && !user.is_confirmed) ?? [];
     const locationId = "30023";
@@ -32,21 +36,73 @@ const TeamManagement = () => {
         router.navigate("/settings/invite");
     };
 
-    const sections = [
-        {
-            key: "active",
-            title: `Active (${activeUsers.length})`,
-            data: activeUsers,
-        },
-        {
-            key: "invited",
-            title: `Invited (${invitedUsers.length})`,
-            data: invitedUsers,
-        },
-    ];
+    const filteredUsers = useMemo(() => {
+        return activeUsers.filter((user) => user.first_name.toLowerCase().includes(search.toLowerCase()) || user.last_name.toLowerCase().includes(search.toLowerCase()));
+    }, [activeUsers, search]);
+    const filteredInvitedUsers = useMemo(() => {
+        return invitedUsers.filter((user) => user.first_name.toLowerCase().includes(search.toLowerCase()) || user.last_name.toLowerCase().includes(search.toLowerCase()));
+    }, [invitedUsers, search]);
+
+    const sections = useMemo(() => {
+        const arr = [];
+        if (filteredUsers.length > 0) {
+            arr.push({
+                key: "active",
+                title: `Members (${filteredUsers.length})`,
+                data: filteredUsers,
+            });
+        }
+        if (filteredInvitedUsers.length > 0) {
+            arr.push({
+                key: "invited",
+                title: `Invited (${filteredInvitedUsers.length})`,
+                data: filteredInvitedUsers,
+            });
+        }
+        return arr;
+   
+    }, [filteredUsers, filteredInvitedUsers]);
+
+    const listHeader = (
+        <>
+            <View style={styles.headerButtons}>
+                <Button
+                    text="Back"
+                    onPress={handleBackButton}
+                    style={styles.backButton}
+                    contentStyle={styles.backButtonContent}
+                    variant="transparent"
+                    iconLeft={ChevronLeftIcon}
+                />
+            </View>
+            <RouteHeading>Team Members</RouteHeading>
+            <Button
+                text="Invite Team Member"
+                onPress={handleInviteUser}
+                style={styles.inviteButton}
+                variant="secondary"
+                iconLeft={PlusIcon}
+            />
+            <View style={styles.searchBarContainer}>
+                <SearchIcon width={20} height={20} color={Colors.secondary} />
+                <TextInput
+                    placeholderTextColor={Colors.secondary}
+                    placeholder="Search all team members..."
+                    style={styles.searchBar}
+                    value={search}
+                    onChangeText={setSearch}
+                />
+                {search.length > 0 && (
+                    <Pressable onPress={() => setSearch("")} hitSlop={8}>
+                        <CloseIcon width={20} height={20} color={Colors.secondary} />
+                    </Pressable>
+                )}
+            </View>
+        </>
+    );
 
     return (
-        <View>
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
             <Spinner isVisible={isUsersLoading || loading} />
             <ErrorModal
                 errorCode={error}
@@ -54,11 +110,15 @@ const TeamManagement = () => {
                 onClose={() => setError("")}
             />
             <SectionList
-                style={{
-                    paddingTop: insets.top,
-                    paddingHorizontal: 20,
-                    paddingBottom: 20
-                }}
+                style={styles.list}
+                contentContainerStyle={[
+                    styles.listContent,
+                    {
+                        paddingTop: insets.top,
+                        paddingBottom: 20,
+                    },
+                ]}
+                keyboardShouldPersistTaps="handled"
                 refreshControl={
                     <RefreshControl
                         progressViewOffset={insets.top}
@@ -70,28 +130,13 @@ const TeamManagement = () => {
                 }
                 sections={sections}
                 keyExtractor={(item, index) => item.id ?? `${item.first_name}-${item.last_name}-${index}-${item.avatar_url}`}
-                ListHeaderComponent={() => (
-                    <>
-                        <View style={styles.headerButtons}>
-                            <Button
-                                text="Back"
-                                onPress={handleBackButton}
-                                style={styles.backButton}
-                                contentStyle={styles.backButtonContent}
-                                variant="transparent"
-                                iconLeft={ChevronLeftIcon}
-                            />
-                            <Button
-                                text="Invite Member"
-                                onPress={handleInviteUser}
-                                style={styles.backButton}
-                                variant='secondary'
-                                iconLeft={PlusIcon}
-                            />
-                        </View>
-                        <RouteHeading>Team Management</RouteHeading>
-                    </>
-                )}
+                ListEmptyComponent={
+                    <View style={styles.noResultsContainer}>
+                        <SearchIcon width={48} height={48} color={Colors.secondary} />
+                        <Text style={styles.noResultsText}>{`No Result for "${search}"`}</Text>
+                    </View>
+                }
+                ListHeaderComponent={listHeader}
                 renderSectionHeader={({ section: { title } }) => (
                     <SubHeading>{title}</SubHeading>
                 )}
@@ -100,6 +145,7 @@ const TeamManagement = () => {
                     <TouchableOpacity onPress={() => router.navigate(`/settings/${item.id}`)} activeOpacity={0.6}>
                         <ProfileCardThin
                             name={`${item.first_name} ${item.last_name}`}
+                            isYourself={item.id === user?.sub}
                             avatarUrl={item.avatar_url ?? undefined}
                             locations={item.memberships.map((membership) => membership.location_id)}
                             role={
@@ -112,11 +158,53 @@ const TeamManagement = () => {
                     </TouchableOpacity>
                 )}
             />
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    list: {
+        flex: 1,
+        paddingHorizontal: 20,
+    },
+    listContent: {
+        flexGrow: 1,
+    },
+    noResultsContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 10,
+    },
+    noResultsText: {
+        fontFamily: TextStyles.subHeading.fontFamily,
+        fontSize: TextStyles.subHeading.fontSize,
+        color: Colors.secondary,
+        textAlign: "center",
+    },
+    inviteButton: {
+        marginBottom: 20,
+    },
+    searchBarContainer: {
+        marginBottom: 20,
+        backgroundColor: Colors.darkBackground,
+        borderRadius: 8,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        paddingHorizontal: 20,
+    },
+    searchBar: {
+        paddingVertical: 10,
+        borderRadius: 8,
+        fontFamily: TextStyles.body.fontFamily,
+        fontSize: TextStyles.body.fontSize,
+        color: Colors.secondary,
+        flex: 1,
+    },
     headerButtons: {
         flexDirection: "row",
         justifyContent: "space-between",
