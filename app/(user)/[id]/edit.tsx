@@ -16,7 +16,7 @@ const EditProfileScreen = () => {
 
     return (
         <>
-            <UserInformationForm user={user} isOwner={false}/>
+            <UserInformationForm user={user} />
         </>
     );
 };

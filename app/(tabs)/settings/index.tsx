@@ -27,7 +27,7 @@ const SettingsScreen = () => {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <Heading>Your Profile</Heading>
         <TouchableOpacity
-          onPress={() => router.navigate("/settings/account-information")}
+          onPress={() => router.navigate(`/(user)/${user?.sub}`)}
           activeOpacity={0.6}
         >
           <ProfileCard

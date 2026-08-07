@@ -49,14 +49,14 @@ const TeamManagement = () => {
             arr.push({
                 key: "active",
                 title: `Members (${filteredUsers.length})`,
-                data: filteredUsers,
+                data: filteredUsers.sort((a, b) => a.first_name.localeCompare(b.first_name)),
             });
         }
         if (filteredInvitedUsers.length > 0) {
             arr.push({
                 key: "invited",
                 title: `Invited (${filteredInvitedUsers.length})`,
-                data: filteredInvitedUsers,
+                data: filteredInvitedUsers.sort((a, b) => a.first_name.localeCompare(b.first_name)),
             });
         }
         return arr;
@@ -142,7 +142,7 @@ const TeamManagement = () => {
                 )}
                 stickySectionHeadersEnabled={false}
                 renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => router.navigate(`/settings/${item.id}`)} activeOpacity={0.6}>
+                    <TouchableOpacity onPress={() => router.navigate(`/(user)/${item.id}`)} activeOpacity={0.6}>
                         <ProfileCardThin
                             name={`${item.first_name} ${item.last_name}`}
                             isYourself={item.id === user?.sub}

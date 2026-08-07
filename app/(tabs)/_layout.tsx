@@ -1,5 +1,4 @@
 import { Tabs } from "expo-router";
-import React from "react";
 
 import ChecklistIcon from "@/assets/icons/checklist.svg";
 import GiftIcon from "@/assets/icons/gift.svg";

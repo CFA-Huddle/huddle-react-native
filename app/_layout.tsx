@@ -8,7 +8,7 @@ import { useLocationUsers } from "@/hooks/useLocationUsers";
 import { asyncStoragePersister, queryClient } from "@/queryClient";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { Amplify } from "aws-amplify";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -55,6 +55,7 @@ const InitialLayout = () => {
     <Stack>
       <Stack.Protected guard={isLoggedIn}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(user)/[id]" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected guard={!isLoggedIn}>

@@ -19,7 +19,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 
 
@@ -47,7 +47,7 @@ const ProfileDetailsScreen = () => {
     };
 
     const handleEditProfile = () => {
-        router.navigate(`/settings/${id}/edit`);
+        router.navigate(`/(user)/${id}/edit`);
     };
 
     const handleSetRole = () => {
@@ -123,10 +123,14 @@ const ProfileDetailsScreen = () => {
                             <Text style={styles.userName}>{user.fullName}</Text>
                         </View>
                         <Text style={styles.userRole}> {user.roles?.map((role) => RoleLabels[role] ?? role).join(", ")}</Text>
-                        <Pressable style={styles.userEmailContainer} onPress={() => Linking.openURL(`mailto:${user.user?.email}`)}>
-                            <Text style={styles.userEmailLabel}>Email Address</Text>
-                            <Text style={styles.userEmailText}>{user.user?.email}</Text>
-                        </Pressable>
+                        <TouchableOpacity style={styles.userEmailContainer} 
+                            onPress={() => Linking.openURL(`mailto:${user.user?.email}`)} 
+                            onLongPress={() => {}}
+                            activeOpacity={0.8}
+                        >
+                            <Text selectable={false} style={styles.userEmailLabel}>Email Address</Text>
+                            <Text selectable={true} style={styles.userEmailText}>{user.user?.email}</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.buttonsContainer}>
                         <Button
@@ -135,17 +139,13 @@ const ProfileDetailsScreen = () => {
                             iconLeft={EditIcon}
                             onPress={handleEditProfile}
                         />
+                        {!isOwner && (
                         <Button
-                            variant="secondary"
-                            text="Set Role"
-                            onPress={handleSetRole}
-                        />
-                        <Button
-                            disabled={isOwner}
                             variant="primary"
                             text="Delete Team Member"
                             onPress={() => setIsDeleteModalOpen(true)}
                         />
+                        )}
                     </View>
                 </View>
             </View>
@@ -169,6 +169,7 @@ const createStyles = (insets: EdgeInsets) => StyleSheet.create({
     },
     buttonsContainer: {
         gap: 12,
+        marginBottom: 20,
     },
     userEmailContainer: {
         gap: 2,

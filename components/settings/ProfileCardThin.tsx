@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     gap: 9,
   },
   nameContainer: {
-    gap: 4,
+    gap: 2,
   },
   header: {
     flexDirection: "row",
@@ -59,17 +59,17 @@ const styles = StyleSheet.create({
   },
   yourself: {
     fontFamily: TextStyles.body.fontFamily,
-    fontSize: TextStyles.title.fontSize,
+    fontSize: TextStyles.subTitle.fontSize,
     color: Colors.muted,
   },
   name: {
     fontFamily: TextStyles.title.fontFamily,
-    fontSize: TextStyles.title.fontSize,
+    fontSize: TextStyles.subTitle.fontSize,
     color: TextStyles.title.color,
   },
   role: {
     fontFamily: TextStyles.subTitle.fontFamily,
-    fontSize: TextStyles.subTitle.fontSize,
+    fontSize: TextStyles.label.fontSize,
     color: TextStyles.subTitle.color,
   },
   locations: {

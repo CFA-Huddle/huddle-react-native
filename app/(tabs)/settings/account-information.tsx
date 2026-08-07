@@ -3,7 +3,6 @@ import Spinner from "@/components/ui/Spinner";
 import { useAuthContext } from "@/context/AuthContext";
 import { useLocationUsers } from "@/hooks/useLocationUsers";
 import { User } from "@/types/User";
-import React from "react";
 
 const AccountInformationScreen = () => {
     const { user: authUser } = useAuthContext();
@@ -18,7 +17,7 @@ const AccountInformationScreen = () => {
     return (
         <>
             <Spinner isVisible={isUsersLoading} />
-            <UserInformationForm user={user} isOwner={true} />
+            <UserInformationForm user={user} />
         </>
     );
 };

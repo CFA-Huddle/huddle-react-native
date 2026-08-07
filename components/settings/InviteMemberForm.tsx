@@ -36,9 +36,9 @@ const InviteMemberForm = () => {
         setError: setFieldError,
         getValues,
         setValue,
-        formState: { errors },
+        formState: { errors, isValid },
     } = useForm<InviteUserRequest>({
-        defaultValues: { email: "", first_name: "", last_name: "", memberships: [] },
+        defaultValues: { email: "", first_name: "", last_name: "", memberships: [{ roles: [selectedRole], location_id: "30023" }] },
         reValidateMode: "onSubmit",
     });
     const roleError = errors.memberships?.message;
@@ -192,6 +192,7 @@ const InviteMemberForm = () => {
                     text="Send Invitation"
                     onPress={handleSubmit(onSubmit)}
                     style={styles.updateProfileButton}
+                    disabled={!isValid}
                 />
             </View>
         </TouchableWithoutFeedback>

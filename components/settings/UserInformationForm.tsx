@@ -6,21 +6,27 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Spinner from "@/components/ui/Spinner";
 import TextField from "@/components/ui/TextField";
-import { TextStyles } from "@/constants/theme";
+import { Apercu, Colors, TextStyles } from "@/constants/theme";
 import pickProfilePicture from "@/hooks/useImagePicker";
 import { useUpdateUser } from "@/hooks/useUpdateUser";
+import { Role, RoleLabels } from "@/types/Membership";
 import { User } from "@/types/User";
 import { isValidEmail } from "@/utils/string";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import Animated from "react-native-reanimated";
+
+import { useAuthContext } from "@/context/AuthContext";
+import { useShake } from "@/hooks/useShake";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import RolesModal from "./RolesModal";
 
 type UserInformationFormProps = {
     user: User;
-    isOwner: boolean;
 };
 
 type UserInformationFormValues = {
@@ -28,29 +34,54 @@ type UserInformationFormValues = {
     lastName: string;
     email: string;
     profilePicture: { base64: string; extension: string } | undefined;
+    role: Role | undefined;
 };
 
-const UserInformationForm = ({ user, isOwner }: UserInformationFormProps) => {
+const UserInformationForm = ({ user }: UserInformationFormProps) => {
+    const { user: currentUser } = useAuthContext();
+    const isOwner = currentUser?.sub === user.id;
     const insets = useSafeAreaInsets();
-
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const { mutate: updateUser, isPending } = useUpdateUser();
     const [profilePicturePreview, setProfilePicturePreview] = useState<string | undefined>(undefined);
+    const roleBottomSheetRef = useRef<BottomSheetModal>(null);
+    const [selectedRole, setSelectedRole] = useState<Role>(user?.memberships?.find((membership) => membership.location_id === "30023")?.roles?.[0] || Role.TEAM_MEMBER);
+
 
     const {
         control,
         handleSubmit,
         setError: setFieldError,
         setValue,
-        formState: { errors },
+        getValues,
+        formState: { errors, isDirty },
     } = useForm<UserInformationFormValues>({
-        defaultValues: { firstName: user?.first_name || "", lastName: user?.last_name || "", email: user?.email || "", profilePicture: undefined },
+        defaultValues: {
+            firstName: user?.first_name || "",
+            lastName: user?.last_name || "",
+            email: user?.email || "",
+            profilePicture: undefined,
+            role: user?.memberships?.find((membership) => membership.location_id === "30023")?.roles?.[0] || undefined
+        },
         reValidateMode: "onSubmit",
     });
 
+    const roleError = errors.role?.message;
+    const { shake, animatedStyle } = useShake();
+
+    useEffect(() => {
+        if (roleError) {
+            shake();
+        }
+    }, [roleError, shake]);
+
     const handleBackButton = () => {
         router.back();
+    };
+
+    const handleSetRole = () => {
+        roleBottomSheetRef.current?.present();
     };
 
     const handleChangeProfilePicture = async () => {
@@ -58,8 +89,8 @@ const UserInformationForm = ({ user, isOwner }: UserInformationFormProps) => {
         const profilePicture = await pickProfilePicture();
         setLoading(false);
         if (!profilePicture) return;
-        setValue("profilePicture", profilePicture);
-   
+        setValue("profilePicture", profilePicture, { shouldDirty: true });
+
         setProfilePicturePreview(profilePicture.base64);
     };
 
@@ -68,6 +99,7 @@ const UserInformationForm = ({ user, isOwner }: UserInformationFormProps) => {
         lastName,
         email,
         profilePicture,
+        role,
     }: UserInformationFormValues) => {
         Keyboard.dismiss();
 
@@ -82,6 +114,7 @@ const UserInformationForm = ({ user, isOwner }: UserInformationFormProps) => {
                 lastName,
                 email,
                 profilePicture,
+                role,
             },
             {
                 onSuccess: (data) => {
@@ -105,6 +138,10 @@ const UserInformationForm = ({ user, isOwner }: UserInformationFormProps) => {
         )
     };
 
+    const saveRole = () => {
+        setValue("role", selectedRole, { shouldDirty: true });
+    };
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
@@ -113,6 +150,12 @@ const UserInformationForm = ({ user, isOwner }: UserInformationFormProps) => {
                     errorCode={error}
                     visible={!!error}
                     onClose={() => setError("")}
+                />
+                <RolesModal
+                    ref={roleBottomSheetRef as React.RefObject<BottomSheetModal>}
+                    selectedRole={selectedRole}
+                    onSelectRole={setSelectedRole}
+                    onSave={saveRole}
                 />
                 <View style={{ paddingTop: insets.top }}>
                     <Button
@@ -181,7 +224,7 @@ const UserInformationForm = ({ user, isOwner }: UserInformationFormProps) => {
                     <Card style={styles.emailCard}>
                         <Text style={styles.textField}>Change profile picture</Text>
                         {profilePicturePreview && (
-                            <Avatar avatarUrl={{uri: profilePicturePreview}} />
+                            <Avatar avatarUrl={{ uri: profilePicturePreview }} />
                         )}
                         <Button
                             text="Choose image"
@@ -190,12 +233,43 @@ const UserInformationForm = ({ user, isOwner }: UserInformationFormProps) => {
                             variant="secondaryMono"
                         />
                     </Card>
+                    {!isOwner && (
+                        <>
+                            <Text style={[TextStyles.largeLabel, styles.label]}>Role</Text>
+                            <Controller
+                                control={control}
+                                name="role"
+                                render={() => (
+                                    <View style={styles.roleFieldContainer}>
+                                        <Animated.View
+                                            style={[
+                                                roleError ? styles.roleCardError : null,
+                                                animatedStyle,
+                                            ]}
+                                        >
+                                            <Card style={styles.emailCard}>
+                                                <Text style={styles.textField}>{RoleLabels[selectedRole]}</Text>
+                                                <Button
+                                                    text="Set role"
+                                                    onPress={handleSetRole}
+                                                    style={styles.changeButton}
+                                                    variant="secondaryMono"
+                                                />
+                                            </Card>
+                                        </Animated.View>
+                                        {roleError && <Text style={styles.errorText}>{roleError}</Text>}
+                                    </View>
+                                )}
+                            />
+                        </>
+                    )}
                 </View>
                 <Button
                     variant="primary"
                     text="Update Profile"
                     onPress={handleSubmit(onSubmit)}
                     style={styles.updateProfileButton}
+                    disabled={!isDirty}
                 />
             </View>
         </TouchableWithoutFeedback>
@@ -207,12 +281,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingBottom: 20,
         flex: 1,
-        justifyContent: "space-between",
         flexDirection: "column",
-        height: "100%",
+        justifyContent: "space-between",
     },
     updateProfileButton: {
-        marginTop: 20
+        marginVertical: 20
     },
     textFieldContainer: {
         padding: 16,
@@ -254,6 +327,21 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: 16,
+    },
+    roleFieldContainer: {
+        marginBottom: 16,
+        width: "100%",
+    },
+    roleCardError: {
+        borderWidth: 1,
+        borderColor: Colors.primary,
+        borderRadius: 8,
+    },
+    errorText: {
+        color: Colors.primary,
+        fontFamily: Apercu.medium,
+        fontSize: 12,
+        marginTop: 4,
     },
 });
 
