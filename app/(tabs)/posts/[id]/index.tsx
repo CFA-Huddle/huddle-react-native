@@ -14,6 +14,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { Circle } from "react-native-animated-spinkit";
@@ -97,10 +98,12 @@ const PostScreen = () => {
           {!isLoading && post ? (
             <>
               <View style={styles.header}>
-                <Avatar avatarUrl={user?.avatar_url ?? ""}></Avatar>
-                <Text style={styles.author} numberOfLines={1}>
-                  {authorName}
-                </Text>
+                <TouchableOpacity onPress={() => router.push(`/(user)/${post.author_id}`)} style={styles.header} activeOpacity={0.6}>
+                  <Avatar avatarUrl={user?.avatar_url ?? ""}></Avatar>
+                  <Text style={styles.author} numberOfLines={1}>
+                    {authorName}
+                  </Text>
+                </TouchableOpacity>
               </View>
               <Text style={styles.title}>{post.title}</Text>
               <Text style={styles.date}>

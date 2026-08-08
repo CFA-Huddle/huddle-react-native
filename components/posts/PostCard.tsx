@@ -5,6 +5,7 @@ import Card from "@/components/ui/Card";
 import { TextStyles } from "@/constants/theme";
 import { useDeletePost } from "@/hooks/useDeletePost";
 import { formatLongDateTime } from "@/utils/string";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleProp,
@@ -12,13 +13,14 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ViewStyle,
+  ViewStyle
 } from "react-native";
 
 interface PostCardProps {
   postId: string;
-  authorName: string;
+  authorName: string; 
   avatarUrl?: string;
+  authorId: string;
   title: string;
   date: string;
   content: string;
@@ -29,6 +31,7 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({
   postId,
   authorName,
+  authorId,
   avatarUrl,
   title,
   date,
@@ -83,10 +86,12 @@ const PostCard: React.FC<PostCardProps> = ({
       >
         <Card style={styles.card}>
           <View style={styles.header}>
-            <Avatar avatarUrl={avatarUrl}></Avatar>
-            <Text style={styles.author} numberOfLines={1}>
-              {authorName}
-            </Text>
+            <TouchableOpacity onPress={() => router.push(`/(user)/${authorId}`)} style={styles.header} activeOpacity={0.6}>
+              <Avatar avatarUrl={avatarUrl}></Avatar>
+              <Text style={styles.author} numberOfLines={1}>
+                {authorName}
+              </Text>
+            </TouchableOpacity>
           </View>
           <Text style={styles.title} numberOfLines={3}>
             {title}

@@ -18,6 +18,7 @@ import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import RolesModal from "./RolesModal";
@@ -77,7 +78,7 @@ const InviteMemberForm = () => {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
                 <Spinner isVisible={isPending || loading} />
                 <ErrorModal
                     errorCode={error}
@@ -109,6 +110,7 @@ const InviteMemberForm = () => {
                             <>
                                 <TextField
                                     style={styles.textFieldContainer}
+                                    placeholder="Enter the first name"
                                     value={value}
                                     onChangeText={(text) => onChange(text)}
                                     error={errors.first_name?.message}
@@ -124,7 +126,8 @@ const InviteMemberForm = () => {
                         render={({ field: { onChange, value } }) => (
                             <>
                                 <TextField
-                                    style={styles.textFieldContainer}
+                                    style={styles.textFieldContainer}   
+                                    placeholder="Enter the last name"
                                     value={value}
                                     onChangeText={(text) => onChange(text)}
                                     error={errors.last_name?.message}
@@ -141,6 +144,7 @@ const InviteMemberForm = () => {
                             <>
                                 <TextField
                                     style={styles.textFieldContainer}
+                                    placeholder="Enter the email address"
                                     value={value}
                                     onChangeText={(text) => onChange(text)}
                                     error={errors.email?.message}
@@ -194,7 +198,7 @@ const InviteMemberForm = () => {
                     style={styles.updateProfileButton}
                     disabled={!isValid}
                 />
-            </View>
+            </ScrollView>
         </TouchableWithoutFeedback>
     );
 };
@@ -203,13 +207,13 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingBottom: 20,
-        flex: 1,
+        flexGrow: 1,
         justifyContent: "space-between",
         flexDirection: "column",
-        height: "100%",
     },
     updateProfileButton: {
-        marginTop: 20
+        marginTop: 20,
+        marginBottom: 20,
     },
     textFieldContainer: {
         padding: 16,

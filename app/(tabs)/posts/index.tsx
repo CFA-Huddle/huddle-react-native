@@ -93,6 +93,7 @@ const HomeScreen = () => {
         renderItem={({ item }) => (
           <PostCard
             postId={item.id}
+            authorId={item.author_id}
             authorName={userMap[item.author_id]?.name ?? ""}
             avatarUrl={userMap[item.author_id]?.avatar_url}
             title={item.title}

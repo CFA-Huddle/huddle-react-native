@@ -12,8 +12,8 @@ import React, { useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Keyboard, StyleSheet, Text } from "react-native";
 import {
-    KeyboardAwareScrollView,
-    KeyboardAwareScrollViewRef,
+  KeyboardAwareScrollView,
+  KeyboardAwareScrollViewRef,
 } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -139,6 +139,7 @@ const PostForm: React.FC<Props> = ({ postId, mode }) => {
                 onChange(text);
                 clearErrors("title");
               }}
+              style={styles.textFieldContainer}
               error={errors.title?.message}
             />
           )}
@@ -158,7 +159,7 @@ const PostForm: React.FC<Props> = ({ postId, mode }) => {
                 clearErrors("message");
               }}
               multiline
-              style={styles.message}
+              style={[styles.textFieldContainer, styles.message]}
               error={errors.message?.message}
               onFocus={() => scrollRef.current?.scrollToEnd({ animated: true })}
             />
@@ -190,6 +191,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: Colors.textPrimary,
     marginBottom: 10,
+  },
+  textFieldContainer: {
+    padding: 16,
   },
   message: {
     height: 200,

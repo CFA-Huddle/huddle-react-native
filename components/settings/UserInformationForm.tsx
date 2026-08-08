@@ -21,7 +21,7 @@ import Animated from "react-native-reanimated";
 import { useAuthContext } from "@/context/AuthContext";
 import { useShake } from "@/hooks/useShake";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import RolesModal from "./RolesModal";
 
@@ -144,7 +144,7 @@ const UserInformationForm = ({ user }: UserInformationFormProps) => {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
                 <Spinner isVisible={isPending || loading} />
                 <ErrorModal
                     errorCode={error}
@@ -271,7 +271,7 @@ const UserInformationForm = ({ user }: UserInformationFormProps) => {
                     style={styles.updateProfileButton}
                     disabled={!isDirty}
                 />
-            </View>
+            </ScrollView>
         </TouchableWithoutFeedback>
     );
 };
@@ -280,12 +280,12 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingBottom: 20,
-        flex: 1,
+        flexGrow: 1,
         flexDirection: "column",
         justifyContent: "space-between",
     },
     updateProfileButton: {
-        marginVertical: 20
+        marginVertical: 20,
     },
     textFieldContainer: {
         padding: 16,
