@@ -2,6 +2,7 @@ import ActionModal from "@/components/shared/ActionModal";
 import Avatar from "@/components/shared/Avatar";
 import ErrorModal from "@/components/shared/ErrorModal";
 import Card from "@/components/ui/Card";
+import Skeleton from "@/components/ui/Skeleton";
 import { TextStyles } from "@/constants/theme";
 import { useDeletePost } from "@/hooks/useDeletePost";
 import { formatLongDateTime } from "@/utils/string";
@@ -15,7 +16,8 @@ import {
   ViewStyle,
 } from "react-native";
 
-interface PostCardProps {
+type LoadedPostCardProps = {
+  isLoading?: false;
   postId: string;
   authorName: string;
   avatarUrl?: string;
@@ -24,9 +26,46 @@ interface PostCardProps {
   content: string;
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
-}
+};
 
-const PostCard: React.FC<PostCardProps> = ({
+type PostCardProps =
+  | LoadedPostCardProps
+  | { isLoading: true; style?: StyleProp<ViewStyle> };
+
+const PostCardSkeleton: React.FC = () => {
+  return (
+    <>
+      <View style={styles.header}>
+        <Skeleton width={28} height={28} borderRadius={14} />
+        <Skeleton width={120} height={16} />
+      </View>
+      <Skeleton width="85%" height={20} />
+      <Skeleton width={140} height={16} />
+      <View style={styles.contentSkeleton}>
+        <Skeleton width="100%" height={16} />
+        <Skeleton width="100%" height={16} />
+        <Skeleton width="70%" height={16} />
+      </View>
+      <Skeleton width={110} height={16} style={styles.seeMoreSkeleton} />
+    </>
+  );
+};
+
+const PostCard: React.FC<PostCardProps> = (props) => {
+  if (props.isLoading) {
+    return (
+      <View style={[styles.container, props.style]}>
+        <Card style={styles.card}>
+          <PostCardSkeleton />
+        </Card>
+      </View>
+    );
+  }
+
+  return <LoadedPostCard {...props} />;
+};
+
+const LoadedPostCard: React.FC<LoadedPostCardProps> = ({
   postId,
   authorName,
   avatarUrl,
@@ -140,6 +179,12 @@ const styles = StyleSheet.create({
     fontFamily: TextStyles.hint.fontFamily,
     fontSize: TextStyles.hint.fontSize,
     color: TextStyles.hint.color,
+    marginTop: 2,
+  },
+  contentSkeleton: {
+    gap: 6,
+  },
+  seeMoreSkeleton: {
     marginTop: 2,
   },
 });
