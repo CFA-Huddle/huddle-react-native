@@ -5,7 +5,6 @@ import GiftIcon from "@/assets/icons/gift.svg";
 import HomeIcon from "@/assets/icons/home.svg";
 import LetterIcon from "@/assets/icons/letter.svg";
 import UserIcon from "@/assets/icons/user.svg";
-import { HapticTab } from "@/components/haptic-tab";
 import { Apercu, Colors } from "@/constants/theme";
 
 export default function TabLayout() {
@@ -21,8 +20,7 @@ export default function TabLayout() {
           fontFamily: Apercu.medium,
           fontSize: 11,
         },
-        headerShown: false,
-        tabBarButton: HapticTab,
+        headerShown: false
       }}
     >
       <Tabs.Screen

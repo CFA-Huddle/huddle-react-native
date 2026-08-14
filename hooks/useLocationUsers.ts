@@ -1,43 +1,39 @@
 import { userService } from "@/api/services/userService";
-import { LocationUser } from "@/types/User";
+import { useLocationContext } from "@/context/LocationContext";
 import { useQuery } from "@tanstack/react-query";
 
-export const locationUsersKey = (locationId: string) => [
-  "locationUsers",
-  locationId,
-];
 
-export function useLocationUsers(locationId: string) {
+export function useLocationUsers() {
+  const { selectedLocation } = useLocationContext();
+
   return useQuery({
-    queryKey: locationUsersKey(locationId),
-    queryFn: () => userService.getUsersByLocationId(locationId),
-    enabled: !!locationId,
+    queryKey: ["locationUsers", selectedLocation],
+    queryFn: () => {
+      if (!selectedLocation) {
+        return Promise.reject(new Error("No location selected"));
+      }
+      return userService.getUsersByLocationId(selectedLocation);
+    },
+    enabled: !!selectedLocation,
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
 }
 
-export function useLocationUser(locationId: string, userId?: string): LocationUser {
-  const { data } = useLocationUsers(locationId);
+export function useLocationUser(userId?: string) {
+  const { selectedLocation } = useLocationContext();
+  const { data, isPending } = useLocationUsers(); 
 
   const user = data?.find((u) => u.id === userId);
 
   const membership = user?.memberships.find(
-    (m) => m.location_id === locationId,
+    (m) => m.location_id === selectedLocation,
   );
-
-  const firstName = user?.first_name;
-  const lastName = user?.last_name;
-
   const locationIds = user?.memberships.map((m) => m.location_id) ?? [];
 
   return {
     user,
-    userId: user?.id,
-    firstName,
-    lastName,
-    fullName: user ? `${firstName} ${lastName}` : undefined,
-    roles: membership?.roles ?? [],
     membership,
     locationIds,
+    isLoading: isPending,
   };
 }

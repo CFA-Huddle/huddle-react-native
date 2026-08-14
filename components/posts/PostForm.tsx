@@ -4,6 +4,7 @@ import Button from "@/components/ui/Button";
 import Spinner from "@/components/ui/Spinner";
 import TextField from "@/components/ui/TextField";
 import { Apercu, Colors } from "@/constants/theme";
+import { useLocationContext } from "@/context/LocationContext";
 import { useCreatePost } from "@/hooks/useCreatePost";
 import { usePost } from "@/hooks/usePost";
 import { useUpdatePost } from "@/hooks/useUpdatePost";
@@ -28,6 +29,7 @@ type FormValues = {
 };
 
 const PostForm: React.FC<Props> = ({ postId, mode }) => {
+
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<KeyboardAwareScrollViewRef>(null);
   const isEditing = mode === "edit";
@@ -42,6 +44,7 @@ const PostForm: React.FC<Props> = ({ postId, mode }) => {
   const isPending = isEditing ? update.isPending : create.isPending;
   const resetMutation = isEditing ? update.reset : create.reset;
 
+  const { selectedLocation } = useLocationContext();
   const {
     control,
     handleSubmit,
@@ -80,10 +83,10 @@ const PostForm: React.FC<Props> = ({ postId, mode }) => {
           onSuccess: () => router.back(),
         },
       );
-    } else {
+    } else if (selectedLocation) {
       create.mutate(
         {
-          location_id: "30023",
+          location_id: selectedLocation,
           title: data.title,
           content: data.message,
         },

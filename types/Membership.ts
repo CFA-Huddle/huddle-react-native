@@ -38,3 +38,12 @@ export interface DeleteMembershipRequest {
   userId: string;
   location_id: string;
 }
+
+export interface GetMembershipsByUserId {
+  memberships: UserMembership[];
+}
+
+export interface UserMembershipResponse {
+  user_id: string;
+  memberships: UserMembership[];
+}

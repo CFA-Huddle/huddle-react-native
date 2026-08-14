@@ -6,7 +6,7 @@ import { router, useLocalSearchParams } from "expo-router";
 const EditProfileScreen = () => {
     const { id } = useLocalSearchParams<{ id: string }>();
 
-    const { data: users, isLoading: isUsersLoading } = useLocationUsers("30023");
+    const { data: users } = useLocationUsers();
     const user = users?.find((user: User) => user.id === id);
 
     if (!user) {

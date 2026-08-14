@@ -1,7 +1,5 @@
-import { userService } from "@/api/services/userService";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import EditIcon from "@/assets/icons/edit.svg";
-import RolesModal from "@/components/settings/RolesModal";
 import ActionModal from "@/components/shared/ActionModal";
 import Avatar from "@/components/shared/Avatar";
 import ErrorModal from "@/components/shared/ErrorModal";
@@ -9,15 +7,12 @@ import Button from "@/components/ui/Button";
 import { Colors, TextStyles } from "@/constants/theme";
 import { useAuthContext } from "@/context/AuthContext";
 import { useDeleteMembership } from "@/hooks/useDeleteMembership";
-import { locationUsersKey, useLocationUser } from "@/hooks/useLocationUsers";
-import { queryClient } from "@/queryClient";
+import { useLocationUser } from "@/hooks/useLocationUsers";
 import { AuthorizedRoles, Role, RoleLabels } from "@/types/Membership";
-import { LocationUser } from "@/types/User";
 import { getHighestRole } from "@/utils/roles";
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -29,23 +24,16 @@ type UserProfilePageProps = {
 const UserProfilePage = ({ id }: UserProfilePageProps) => {
     const { user: authUser } = useAuthContext();
     const { mutate: deleteMembership, isPending: isDeletingMembership } = useDeleteMembership();
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [error, setError] = useState("");
     const isOwner = authUser?.sub === id;
-    const { roles: userRoles, locationIds } = useLocationUser("30023", authUser?.sub);
-    const isAuthorized = AuthorizedRoles.includes(getHighestRole(userRoles ?? []) ?? Role.TEAM_MEMBER);
-    const user: LocationUser = useLocationUser("30023", id);
+    const { membership: selfMembership } = useLocationUser(authUser?.sub);
+    const { membership, user } = useLocationUser(id);
+
+    const isAuthorized = AuthorizedRoles.includes(getHighestRole(selfMembership?.roles ?? []) ?? Role.TEAM_MEMBER);
     const insets = useSafeAreaInsets();
     const styles = createStyles(insets);
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [selectedRole, setSelectedRole] = useState<Role>(Role.TEAM_MEMBER);
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-    useEffect(() => {
-        if (!user.membership) return;
-        setSelectedRole(getHighestRole(user.membership.roles) as Role);
-    }, [user]);
-
-    const roleBottomSheetRef = useRef<BottomSheetModal>(null);
     const handleBackButton = () => {
         router.back();
     };
@@ -54,12 +42,9 @@ const UserProfilePage = ({ id }: UserProfilePageProps) => {
         router.navigate(`/(user)/${id}/edit`);
     };
 
-    const handleSetRole = () => {
-        roleBottomSheetRef.current?.present();
-    };
     const handleDeleteUser = () => {
         setIsDeleteModalOpen(false);
-        deleteMembership({ userId: user.userId ?? "", location_id: "30023" }, {
+        deleteMembership({ userId: id }, {
             onSuccess: () => {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                 router.back();
@@ -71,30 +56,12 @@ const UserProfilePage = ({ id }: UserProfilePageProps) => {
         });
     };
 
-    const saveRole = async () => {
-        try {
-            setLoading(true);
-            await userService.updateUserRole(user.userId ?? "", "30023", { roles: [selectedRole] });
-            queryClient.invalidateQueries({ queryKey: locationUsersKey("30023") });
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        } catch (error) {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-            setError(error as string);
-        }
-        setLoading(false);
-    };
     return (
         <>
             <ErrorModal
                 errorCode={error}
                 visible={!!error}
                 onClose={() => setError("")}
-            />
-            <RolesModal
-                ref={roleBottomSheetRef as React.RefObject<BottomSheetModal>}
-                selectedRole={selectedRole}
-                onSelectRole={setSelectedRole}
-                onSave={saveRole}
             />
             <ActionModal
                 title="Remove from Team?"
@@ -120,22 +87,22 @@ const UserProfilePage = ({ id }: UserProfilePageProps) => {
                 />
                 <View style={styles.contentContainer}>
                     <View style={styles.userInfoContainer}>
-                        <Avatar avatarUrl={user.user?.avatar_url ?? undefined} size={128} />
+                        <Avatar avatarUrl={user?.avatar_url ?? undefined} size={128} />
                         <View style={styles.userInfoTextContainer}>
-                            <Text style={styles.userName}>{user.fullName}</Text>
+                            <Text style={styles.userName}>{user?.first_name} {user?.last_name}</Text>
                         </View>
-                        <Text style={styles.userRole}> {user.roles?.map((role) => RoleLabels[role] ?? role).join(", ")}</Text>
+                        <Text style={styles.userRole}> {membership?.roles?.map((role) => RoleLabels[role] ?? role).join(", ")}</Text>
                         <TouchableOpacity style={styles.userEmailContainer}
-                            onPress={() => Linking.openURL(`mailto:${user.user?.email}`)}
+                            onPress={() => Linking.openURL(`mailto:${user?.email}`)}
                             onLongPress={() => { }}
                             activeOpacity={0.6}
                         >
                             <Text selectable={false} style={styles.userEmailLabel}>Email Address</Text>
-                            <Text selectable={true} style={styles.userEmailText}>{user.user?.email}</Text>
+                            <Text selectable={true} style={styles.userEmailText}>{user?.email}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.buttonsContainer}>
-                        {isAuthorized || isOwner && (
+                        {(isAuthorized || isOwner) && (
                             <Button
                                 variant="secondary"
                                 text="Edit Account Information"

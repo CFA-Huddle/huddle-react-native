@@ -7,7 +7,7 @@ import { User } from "@/types/User";
 const AccountInformationScreen = () => {
     const { user: authUser } = useAuthContext();
 
-    const { data: users, isLoading: isUsersLoading } = useLocationUsers("30023");
+    const { data: users, isLoading: isUsersLoading } = useLocationUsers();
     const user = users?.find((user: User) => user.id === authUser?.sub);
 
     if (!user) {

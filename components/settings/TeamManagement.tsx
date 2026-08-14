@@ -10,6 +10,7 @@ import Button from "@/components/ui/Button";
 import Spinner from "@/components/ui/Spinner";
 import { Colors, TextStyles } from "@/constants/theme";
 import { useAuthContext } from "@/context/AuthContext";
+import { useLocationContext } from "@/context/LocationContext";
 import { useLocationUsers } from "@/hooks/useLocationUsers";
 import { RoleLabels } from "@/types/Membership";
 import { router } from "expo-router";
@@ -22,13 +23,12 @@ const TeamManagement = () => {
     const insets = useSafeAreaInsets();
 
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const { data: users, isLoading: isUsersLoading, refetch, isRefetching } = useLocationUsers("30023");
+    const { data: users, isLoading: isUsersLoading, refetch, isRefetching } = useLocationUsers();
     const { user } = useAuthContext();
     const [search, setSearch] = useState("");
-    const activeUsers = users?.filter((user) => user.is_active && user.is_confirmed) ?? [];
-    const invitedUsers = users?.filter((user) => user.is_active && !user.is_confirmed) ?? [];
-    const locationId = "30023";
+    const activeUsers = useMemo(() => users?.filter((user) => user.is_active && user.is_confirmed) ?? [], [users]);
+    const invitedUsers = useMemo(() => users?.filter((user) => user.is_active && !user.is_confirmed) ?? [], [users]);
+    const { selectedLocation } = useLocationContext();  
     const handleBackButton = () => {
         router.back();
     };
@@ -103,7 +103,7 @@ const TeamManagement = () => {
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior="padding">
-            <Spinner isVisible={isUsersLoading || loading} />
+            <Spinner isVisible={isUsersLoading} />
             <ErrorModal
                 errorCode={error}
                 visible={!!error}
@@ -150,7 +150,7 @@ const TeamManagement = () => {
                             locations={item.memberships.map((membership) => membership.location_id)}
                             role={
                                 item.memberships
-                                    .find((membership) => membership.location_id === locationId)
+                                    .find((membership) => membership.location_id === selectedLocation)
                                     ?.roles.map((role) => RoleLabels[role])
                                     .join(", ") ?? ""
                             }

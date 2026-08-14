@@ -19,6 +19,7 @@ import { Controller, useForm } from "react-hook-form";
 import Animated from "react-native-reanimated";
 
 import { useAuthContext } from "@/context/AuthContext";
+import { useLocationContext } from "@/context/LocationContext";
 import { useShake } from "@/hooks/useShake";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Keyboard, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
@@ -39,6 +40,7 @@ type UserInformationFormValues = {
 
 const UserInformationForm = ({ user }: UserInformationFormProps) => {
     const { user: currentUser } = useAuthContext();
+    const { selectedLocation } = useLocationContext();
     const isOwner = currentUser?.sub === user.id;
     const insets = useSafeAreaInsets();
     const [error, setError] = useState("");
@@ -46,15 +48,13 @@ const UserInformationForm = ({ user }: UserInformationFormProps) => {
     const { mutate: updateUser, isPending } = useUpdateUser();
     const [profilePicturePreview, setProfilePicturePreview] = useState<string | undefined>(undefined);
     const roleBottomSheetRef = useRef<BottomSheetModal>(null);
-    const [selectedRole, setSelectedRole] = useState<Role>(user?.memberships?.find((membership) => membership.location_id === "30023")?.roles?.[0] || Role.TEAM_MEMBER);
-
+    const [selectedRole, setSelectedRole] = useState<Role>(user?.memberships?.find((membership) => membership.location_id === selectedLocation)?.roles?.[0] || Role.TEAM_MEMBER);
 
     const {
         control,
         handleSubmit,
         setError: setFieldError,
         setValue,
-        getValues,
         formState: { errors, isDirty },
     } = useForm<UserInformationFormValues>({
         defaultValues: {
@@ -62,7 +62,7 @@ const UserInformationForm = ({ user }: UserInformationFormProps) => {
             lastName: user?.last_name || "",
             email: user?.email || "",
             profilePicture: undefined,
-            role: user?.memberships?.find((membership) => membership.location_id === "30023")?.roles?.[0] || undefined
+            role: user?.memberships?.find((membership) => membership.location_id === selectedLocation)?.roles?.[0] || undefined
         },
         reValidateMode: "onSubmit",
     });

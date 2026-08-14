@@ -8,7 +8,7 @@ import { useLocationUser } from "@/hooks/useLocationUsers";
 import { usePost } from "@/hooks/usePost";
 import { formatLongDateTime } from "@/utils/string";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   RefreshControl,
   ScrollView,
@@ -25,23 +25,13 @@ const PostScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const { data: post, error, isLoading, isRefetching, refetch } = usePost(id);
+  
+  const { user: author } = useLocationUser(post?.author_id ?? "");
+  const authorName = `${author?.first_name ?? ""} ${author?.last_name ?? ""}`;
 
-  const { user, fullName: authorName } = useLocationUser("30023", post?.author_id);
-
-  const [isErrorVisible, setIsErrorVisible] = useState(false);
-
-  useEffect(() => {
-    if (error) {
-      setIsErrorVisible(true);
-    }
-  }, [error]);
+  const [dismissedError, setDismissedError] = useState<Error | null>(null);
 
   const handleBackButton = () => {
-    router.back();
-  };
-
-  const handleErrorClose = () => {
-    setIsErrorVisible(false);
     router.back();
   };
 
@@ -53,8 +43,8 @@ const PostScreen = () => {
     <>
       <ErrorModal
         errorCode={error?.message ?? ""}
-        visible={!!error && isErrorVisible}
-        onClose={handleErrorClose}
+        visible={!!error && error !== dismissedError}
+        onClose={() => setDismissedError(error)}
         subtitle="We're having some trouble loading this post. Please try again later."
       />
       <ScrollView
@@ -99,7 +89,7 @@ const PostScreen = () => {
             <>
               <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.push(`/(user)/${post.author_id}`)} style={styles.header} activeOpacity={0.6}>
-                  <Avatar avatarUrl={user?.avatar_url ?? ""}></Avatar>
+                  <Avatar avatarUrl={author?.avatar_url ?? ""}></Avatar>
                   <Text style={styles.author} numberOfLines={1}>
                     {authorName}
                   </Text>

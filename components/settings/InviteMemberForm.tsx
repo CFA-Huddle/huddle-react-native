@@ -7,6 +7,7 @@ import Card from "@/components/ui/Card";
 import Spinner from "@/components/ui/Spinner";
 import TextField from "@/components/ui/TextField";
 import { Apercu, Colors, TextStyles } from "@/constants/theme";
+import { useLocationContext } from "@/context/LocationContext";
 import { useInviteUser } from "@/hooks/useInviteUser";
 import { useShake } from "@/hooks/useShake";
 import { Role, RoleLabels } from "@/types/Membership";
@@ -31,6 +32,7 @@ const InviteMemberForm = () => {
     const [profilePicturePreview, setProfilePicturePreview] = useState<string | undefined>(undefined);
     const roleBottomSheetRef = useRef<BottomSheetModal>(null);
     const [selectedRole, setSelectedRole] = useState<Role>(Role.TEAM_MEMBER);
+    const { selectedLocation } = useLocationContext();
     const {
         control,
         handleSubmit,
@@ -39,7 +41,7 @@ const InviteMemberForm = () => {
         setValue,
         formState: { errors, isValid },
     } = useForm<InviteUserRequest>({
-        defaultValues: { email: "", first_name: "", last_name: "", memberships: [{ roles: [selectedRole], location_id: "30023" }] },
+        defaultValues: { email: "", first_name: "", last_name: "", memberships: [{ roles: [selectedRole], location_id: selectedLocation ?? "" }] },
         reValidateMode: "onSubmit",
     });
     const roleError = errors.memberships?.message;
@@ -73,7 +75,7 @@ const InviteMemberForm = () => {
     };
 
     const saveRole = () => {
-        setValue("memberships", [{ roles: [selectedRole], location_id: "30023" }]);
+        setValue("memberships", [{ roles: [selectedRole], location_id: selectedLocation ?? "" }]);
     };
 
     return (

@@ -7,13 +7,20 @@ import { Colors } from "@/constants/theme";
 import { useLocationUsers } from "@/hooks/useLocationUsers";
 import { usePosts } from "@/hooks/usePosts";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+const SKELETON_ITEMS = [
+  { id: "skeleton-0" },
+  { id: "skeleton-1" },
+  { id: "skeleton-2" },
+  { id: "skeleton-3" },
+];
+
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
-
+  
   const {
     data: posts,
     error,
@@ -21,11 +28,11 @@ const HomeScreen = () => {
     isRefetching,
     isPending,
     isLoading,
-  } = usePosts("30023");
+  } = usePosts();
 
-  const [isErrorVisible, setIsErrorVisible] = useState(false);
+  const [dismissedError, setDismissedError] = useState<Error | null>(null);
 
-  const { data: users, isLoading: isUsersLoading } = useLocationUsers("30023");
+  const { data: users, isLoading: isUsersLoading } = useLocationUsers();
 
   const userMap = React.useMemo(() => {
     if (!users) return {};
@@ -34,12 +41,6 @@ const HomeScreen = () => {
       users.map((user) => [user.id, { name: `${user.first_name} ${user.last_name}`, avatar_url: user.avatar_url ?? undefined }]),
     );
   }, [users]);
-
-  useEffect(() => {
-    if (error) {
-      setIsErrorVisible(true);
-    }
-  }, [error]);
 
   const HandlePostTouch = (id: string) => {
     router.navigate({
@@ -54,25 +55,25 @@ const HomeScreen = () => {
     });
   };
 
+  const showSkeletons = isLoading || isPending || isUsersLoading;
+
   return (
     <View style={styles.container}>
       <ErrorModal
         errorCode={error?.message ?? ""}
-        visible={!!error && isErrorVisible}
-        onClose={() => setIsErrorVisible(false)}
+        visible={!!error && error !== dismissedError}
+        onClose={() => setDismissedError(error)}
         subtitle="We're having some trouble loading this content. Please try again later."
       />
       <FlatList
         style={{ paddingTop: insets.top }}
         contentContainerStyle={styles.listContainer}
-        data={posts}
+        data={showSkeletons ? [] : posts}
         keyExtractor={(item) => item.id}
         refreshControl={
           <RefreshControl
             progressViewOffset={insets.top}
-            refreshing={
-              isRefetching || isLoading || isPending || isUsersLoading
-            }
+            refreshing={isRefetching && !showSkeletons}
             onRefresh={refetch}
             colors={[Colors.muted]}
             tintColor={Colors.muted}
@@ -90,6 +91,15 @@ const HomeScreen = () => {
             />
           </>
         )}
+        ListEmptyComponent={
+          showSkeletons ? (
+            <>
+              {SKELETON_ITEMS.map((item) => (
+                <PostCard key={item.id} isLoading={true} style={styles.card} />
+              ))}
+            </>
+          ) : null
+        }
         renderItem={({ item }) => (
           <PostCard
             postId={item.id}

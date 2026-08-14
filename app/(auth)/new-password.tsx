@@ -1,3 +1,4 @@
+import AuthBackground from "@/components/auth/AuthBackground";
 import NewPasswordLoginForm from "@/components/auth/NewPasswordLoginForm";
 import React from "react";
 import {
@@ -13,21 +14,19 @@ const NewPasswordScreen = () => {
   const offset = { closed: 0, opened: Platform.OS === "ios" ? 20 : 20 };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardStickyView offset={offset} style={styles.footerContainer}>
-        <View style={styles.formContainer}>
-          <NewPasswordLoginForm />
-        </View>
-      </KeyboardStickyView>
-    </TouchableWithoutFeedback>
+    <AuthBackground>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardStickyView offset={offset} style={styles.footerContainer}>
+          <View style={styles.formContainer}>
+            <NewPasswordLoginForm />
+          </View>
+        </KeyboardStickyView>
+      </TouchableWithoutFeedback>
+    </AuthBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  image: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
   formContainer: {
     backgroundColor: "#ffffff",
     borderTopLeftRadius: 8,

@@ -4,7 +4,6 @@ import "react-native-reanimated";
 
 import { CustomFonts } from "@/constants/theme";
 import { AuthProvider, useAuthContext } from "@/context/AuthContext";
-import { useLocationUsers } from "@/hooks/useLocationUsers";
 import { asyncStoragePersister, queryClient } from "@/queryClient";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { Amplify } from "aws-amplify";
@@ -12,6 +11,7 @@ import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { LocationProvider } from "@/context/LocationContext";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as Notifications from "expo-notifications";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -39,13 +39,12 @@ SplashScreen.preventAutoHideAsync();
 const InitialLayout = () => {
   const [fontsLoaded] = useFonts(CustomFonts);
   const { isCheckingAuth, isLoggedIn } = useAuthContext();
-  const { isLoading } = useLocationUsers("30023");
 
   useEffect(() => {
-    if (fontsLoaded && !isCheckingAuth && !isLoading) {
+    if (fontsLoaded && !isCheckingAuth) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, isCheckingAuth, isLoading]);
+  }, [fontsLoaded, isCheckingAuth]);
 
   if (!fontsLoaded || isCheckingAuth) {
     return null;
@@ -71,11 +70,13 @@ export default function RootLayout() {
       <PersistQueryClientProvider persistOptions={{ persister: asyncStoragePersister }} client={queryClient}>
         <AuthProvider>
           <BottomSheetModalProvider>
-            <KeyboardProvider>
-              <SafeAreaProvider>
-                <InitialLayout />
-              </SafeAreaProvider>
-            </KeyboardProvider>
+            <LocationProvider>
+              <KeyboardProvider>
+                <SafeAreaProvider>
+                  <InitialLayout />
+                </SafeAreaProvider>
+              </KeyboardProvider>
+            </LocationProvider>
           </BottomSheetModalProvider>
         </AuthProvider>
       </PersistQueryClientProvider>

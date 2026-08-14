@@ -1,18 +1,22 @@
 import { userService } from "@/api/services/userService";
-import { DeleteMembershipRequest } from "@/types/Membership";
+import { useLocationContext } from "@/context/LocationContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { locationUsersKey } from "./useLocationUsers";
 
 export function useDeleteMembership() {
   const queryClient = useQueryClient();
+  const { selectedLocation } = useLocationContext();
 
   return useMutation({
-    mutationFn: ({ userId, location_id }: DeleteMembershipRequest) => 
-      userService.deleteUserMembership({ userId, location_id }),
+    mutationFn: ({ userId }: { userId: string }) => {
+      if (!selectedLocation) {
+        throw new Error("Location not selected");
+      }
 
-    onSuccess: () => {
+      return userService.deleteUserMembership({ userId, location_id: selectedLocation });
+    },
+    onSuccess: () => {  
       queryClient.invalidateQueries({
-        queryKey: locationUsersKey("30023"),
+        queryKey: ["locationUsers", selectedLocation],
       });
     },
   });

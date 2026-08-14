@@ -1,7 +1,7 @@
 import LogoutButton from "@/components/auth/LogoutButton";
 import ClearCacheButton from "@/components/settings/ClearCacheButton";
 import ProfileCard from "@/components/settings/ProfileCard";
-import Heading from "@/components/shared/Heading";
+import LocationHeader from "@/components/shared/LocationHeader";
 import SubHeading from "@/components/shared/SubHeading";
 import TouchableCard from "@/components/ui/TouchableCard";
 import { TextStyles } from "@/constants/theme";
@@ -15,26 +15,28 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SettingsScreen = () => {
   const insets = useSafeAreaInsets();
-  const { user } = useAuthContext();
-  const { roles: userRoles, locationIds } = useLocationUser("30023", user?.sub);
-
-  const fullName = `${user?.given_name ?? ""} ${user?.family_name ?? ""}`;
-  const topRole = getHighestRole(userRoles ?? []);
+  const { user: authUser } = useAuthContext();
+  
+  const { user, membership, isLoading } = useLocationUser(
+    authUser?.sub,
+  );
+  const fullName = `${user?.first_name ?? ""} ${user?.last_name ?? ""}`;
+  const topRole = getHighestRole(membership?.roles ?? []);
   const isAuthorized = AuthorizedRoles.includes(topRole ?? Role.TEAM_MEMBER);
 
   return (
     <>
-      <View style={[styles.container, { paddingTop: insets.top }]}>
-        <Heading>Your Profile</Heading>
+      <LocationHeader />
+      <View style={[styles.container, { marginTop: 20 }]}>
         <TouchableOpacity
-          onPress={() => router.navigate(`/(user)/${user?.sub}`)}
+          onPress={() => router.navigate(`/(user)/${user?.id}`)}
           activeOpacity={0.6}
         >
           <ProfileCard
             name={fullName}
             role={topRole ? RoleLabels[topRole] : ""}
-            locations={locationIds}
-            avatarUrl={user?.picture}
+            isLoading={isLoading}
+            avatarUrl={user?.avatar_url ?? ""}
           />
         </TouchableOpacity>
 
@@ -55,7 +57,6 @@ const SettingsScreen = () => {
             </View>
           </>
         )}
-
       </View>
       <View style={styles.footer}>
         <LogoutButton />
@@ -66,7 +67,8 @@ const SettingsScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    marginTop: 20,
+    paddingHorizontal: 20,
     flex: 1,
   },
   settingsButtonsContainer: {
