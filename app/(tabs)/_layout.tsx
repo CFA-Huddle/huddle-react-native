@@ -5,16 +5,10 @@ import GiftIcon from "@/assets/icons/gift.svg";
 import HomeIcon from "@/assets/icons/home.svg";
 import LetterIcon from "@/assets/icons/letter.svg";
 import UserIcon from "@/assets/icons/user.svg";
-import LocationHeader from "@/components/shared/LocationHeader";
 import { Apercu, Colors } from "@/constants/theme";
-import { useLocationContext } from "@/context/LocationContext";
 
 export default function TabLayout() {
-  const { selectedLocation } = useLocationContext();
-  if (!selectedLocation) return null;
   return (
-    <>
-    <LocationHeader location={selectedLocation} />
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors.primary,
@@ -69,6 +63,5 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
-    </>
   );
 }

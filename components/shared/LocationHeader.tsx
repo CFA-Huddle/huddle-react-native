@@ -1,24 +1,22 @@
 import ChevronDownIcon from "@/assets/icons/chevron-down.svg";
 import LocationPicker from "@/components/shared/LocationPicker";
 import { Colors, TextStyles } from "@/constants/theme";
+import { useLocationContext } from "@/context/LocationContext";
 import { LocationLabels } from "@/types/Location";
 import React from "react";
-import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-interface LocationHeaderProps {
-    location: string;
-    style?: StyleProp<ViewStyle>;
-}
-
-const LocationHeader: React.FC<LocationHeaderProps> = ({ location, style }) => {
+const LocationHeader: React.FC = () => {
+    const { selectedLocation } = useLocationContext();
+    if (!selectedLocation) return null;
     return (
         <>
             <View style={styles.container}>
                 <LocationPicker>
                     <View style={styles.locationContainer}>
-                        <Text style={styles.fadedText}>{location}</Text>
+                        <Text style={styles.fadedText}>{selectedLocation}</Text>
                         <Text style={styles.separator}>·</Text>
-                        <Text style={styles.text}>{LocationLabels[location]}</Text>
+                        <Text style={styles.text}>{LocationLabels[selectedLocation]}</Text>
                         <ChevronDownIcon color={Colors.primary} width={24} height={24} />
                     </View>
                 </LocationPicker>

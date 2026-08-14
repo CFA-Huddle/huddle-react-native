@@ -7,7 +7,7 @@ import { AuthProvider, useAuthContext } from "@/context/AuthContext";
 import { queryClient } from "@/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Amplify } from "aws-amplify";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 

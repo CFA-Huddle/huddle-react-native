@@ -4,12 +4,11 @@ import Avatar from "@/components/shared/Avatar";
 import ErrorModal from "@/components/shared/ErrorModal";
 import Button from "@/components/ui/Button";
 import { Colors, TextStyles } from "@/constants/theme";
-import { useLocationContext } from "@/context/LocationContext";
 import { useLocationUser } from "@/hooks/useLocationUsers";
 import { usePost } from "@/hooks/usePost";
 import { formatLongDateTime } from "@/utils/string";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   RefreshControl,
   ScrollView,
@@ -25,26 +24,13 @@ const PostScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const { data: post, error, isLoading, isRefetching, refetch } = usePost(id);
-
-  const { selectedLocation } = useLocationContext();
-  if (!selectedLocation) return null;
   
-  const { fullName: authorName } = useLocationUser(selectedLocation, post?.author_id);
+  const { user: author } = useLocationUser(post?.author_id);
+  const authorName = `${author?.first_name ?? ""} ${author?.last_name ?? ""}`;
 
-  const [isErrorVisible, setIsErrorVisible] = useState(false);
-
-  useEffect(() => {
-    if (error) {
-      setIsErrorVisible(true);
-    }
-  }, [error]);
+  const [dismissedError, setDismissedError] = useState<Error | null>(null);
 
   const handleBackButton = () => {
-    router.back();
-  };
-
-  const handleErrorClose = () => {
-    setIsErrorVisible(false);
     router.back();
   };
 
@@ -56,8 +42,8 @@ const PostScreen = () => {
     <>
       <ErrorModal
         errorCode={error?.message ?? ""}
-        visible={!!error && isErrorVisible}
-        onClose={handleErrorClose}
+        visible={!!error && error !== dismissedError}
+        onClose={() => setDismissedError(error)}
         subtitle="We're having some trouble loading this post. Please try again later."
       />
       <ScrollView

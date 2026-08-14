@@ -1,33 +1,29 @@
 import LogoutButton from "@/components/auth/LogoutButton";
 import ProfileCard from "@/components/settings/ProfileCard";
-import Heading from "@/components/shared/Heading";
+import LocationHeader from "@/components/shared/LocationHeader";
 import { useAuthContext } from "@/context/AuthContext";
-import { useLocationContext } from "@/context/LocationContext";
 import { useLocationUser } from "@/hooks/useLocationUsers";
 import { RoleLabels } from "@/types/Membership";
 import { getHighestRole } from "@/utils/roles";
 import { StyleSheet, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SettingsScreen = () => {
-  const insets = useSafeAreaInsets();
-  const { user } = useAuthContext();
-  const { selectedLocation } = useLocationContext();
-  if (!selectedLocation) return null;
+  const { user: authUser } = useAuthContext();
   
-  const { roles: userRoles, locationIds } = useLocationUser(selectedLocation, user?.sub);
-
-  const fullName = `${user?.given_name ?? ""} ${user?.family_name ?? ""}`;
-  const topRole = getHighestRole(userRoles);
+  const { user, membership, isLoading } = useLocationUser(
+    authUser?.sub,
+  );
+  const fullName = `${user?.first_name ?? ""} ${user?.last_name ?? ""}`;
+  const topRole = getHighestRole(membership?.roles ?? []);
 
   return (
     <>
-      <View style={[styles.container, { paddingTop: insets.top }]}>
-        <Heading>Your Profile</Heading>
+      <LocationHeader />
+      <View style={styles.container}>
         <ProfileCard
           name={fullName}
           role={topRole ? RoleLabels[topRole] : ""}
-          locations={locationIds}
+          isLoading={isLoading}
         />
       </View>
       <View style={styles.footer}>
@@ -39,7 +35,8 @@ const SettingsScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    marginTop: 20,
+    paddingHorizontal: 20,
     flex: 1,
   },
   footer: {

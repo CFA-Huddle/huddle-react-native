@@ -29,8 +29,6 @@ type FormValues = {
 };
 
 const PostForm: React.FC<Props> = ({ postId, mode }) => {
-  const { selectedLocation } = useLocationContext();
-  if (!selectedLocation) return null;
 
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<KeyboardAwareScrollViewRef>(null);
@@ -46,6 +44,7 @@ const PostForm: React.FC<Props> = ({ postId, mode }) => {
   const isPending = isEditing ? update.isPending : create.isPending;
   const resetMutation = isEditing ? update.reset : create.reset;
 
+  const { selectedLocation } = useLocationContext();
   const {
     control,
     handleSubmit,
@@ -84,7 +83,7 @@ const PostForm: React.FC<Props> = ({ postId, mode }) => {
           onSuccess: () => router.back(),
         },
       );
-    } else {
+    } else if (selectedLocation) {
       create.mutate(
         {
           location_id: selectedLocation,
