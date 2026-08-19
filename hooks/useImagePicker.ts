@@ -5,7 +5,7 @@ const pickProfilePicture = async (): Promise<{ base64: string; extension: string
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permissionResult.granted) {
-      Alert.alert('Permission required', 'Permission to access the media library is required.');
+      Alert.alert('Photo Library Access', 'Allow access to your photo library in your device Settings to upload images.');
       return null;
     }
 

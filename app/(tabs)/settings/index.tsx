@@ -7,22 +7,19 @@ import TouchableCard from "@/components/ui/TouchableCard";
 import { TextStyles } from "@/constants/theme";
 import { useAuthContext } from "@/context/AuthContext";
 import { useLocationUser } from "@/hooks/useLocationUsers";
-import { AuthorizedRoles, Role, RoleLabels } from "@/types/Membership";
+import { RoleLabels } from "@/types/Membership";
 import { getHighestRole } from "@/utils/roles";
 import { router } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SettingsScreen = () => {
-  const insets = useSafeAreaInsets();
   const { user: authUser } = useAuthContext();
-  
+
   const { user, membership, isLoading } = useLocationUser(
     authUser?.sub,
   );
   const fullName = `${user?.first_name ?? ""} ${user?.last_name ?? ""}`;
   const topRole = getHighestRole(membership?.roles ?? []);
-  const isAuthorized = AuthorizedRoles.includes(topRole ?? Role.TEAM_MEMBER);
 
   return (
     <>
@@ -47,16 +44,12 @@ const SettingsScreen = () => {
           </TouchableCard>
           <ClearCacheButton />
         </View>
-        {isAuthorized && (
-          <>
-            <SubHeading>Location</SubHeading>
-            <View style={styles.settingsButtonsContainer}>
-              <TouchableCard onPress={() => router.navigate("/settings/team-management")} activeOpacity={0.6}>
-                <Text style={styles.buttonText}>Team Members</Text>
-              </TouchableCard>
-            </View>
-          </>
-        )}
+        <SubHeading>Location</SubHeading>
+        <View style={styles.settingsButtonsContainer}>
+          <TouchableCard onPress={() => router.navigate("/settings/team-membership")} activeOpacity={0.6}>
+            <Text style={styles.buttonText}>Team Membership</Text>
+          </TouchableCard>
+        </View>
       </View>
       <View style={styles.footer}>
         <LogoutButton />

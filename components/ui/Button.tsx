@@ -2,12 +2,12 @@ import { Apercu, Colors } from "@/constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
+    StyleProp,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    ViewStyle,
 } from "react-native";
 import { SvgProps } from "react-native-svg";
 
@@ -40,7 +40,7 @@ const VARIANT_CONFIG = {
     activeOpacity: 0.6,
     disabledStyle: {},
   },
-  secondaryMono: {
+  outlined: {
     contentColor: Colors.secondary,
     containerStyle: {
       backgroundColor: "#ffffff",

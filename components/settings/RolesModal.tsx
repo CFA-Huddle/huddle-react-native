@@ -1,9 +1,12 @@
 import BottomModal from "@/components/ui/BottomModal";
 import CheckboxInput from "@/components/ui/CheckboxInput";
 import { TextStyles } from "@/constants/theme";
-import { HiddenRoles, Role, RoleLabels } from "@/types/Membership";
+import { Role, RoleLabels } from "@/types/Membership";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { StyleSheet, Text, View } from "react-native";
+
+
+const HIDDEN_ROLES = [Role.ADMIN, Role.OPERATOR];
 
 interface RolesModalProps {
     ref: React.RefObject<BottomSheetModal>;
@@ -23,7 +26,7 @@ export default function RolesModal({ ref, selectedRole, onSelectRole, onSave }: 
             <View style={styles.modalContent}>
                 <Text style={styles.modalSectionLabel}>Role</Text>
                 <View style={styles.modalList}>
-                    {Object.values(Role).filter((value: Role) => !HiddenRoles.includes(value)).map((value: Role) => (
+                    {Object.values(Role).filter((value: Role) => !HIDDEN_ROLES.includes(value)).map((value: Role) => (
                         <CheckboxInput<Role>
                             key={value}
                             label={RoleLabels[value]}

@@ -230,7 +230,7 @@ const UserInformationForm = ({ user }: UserInformationFormProps) => {
                             text="Choose image"
                             onPress={handleChangeProfilePicture}
                             style={styles.changeButton}
-                            variant="secondaryMono"
+                            variant="outlined"
                         />
                     </Card>
                     {!isOwner && (
@@ -253,7 +253,7 @@ const UserInformationForm = ({ user }: UserInformationFormProps) => {
                                                     text="Set role"
                                                     onPress={handleSetRole}
                                                     style={styles.changeButton}
-                                                    variant="secondaryMono"
+                                                    variant="outlined"
                                                 />
                                             </Card>
                                         </Animated.View>

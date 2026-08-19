@@ -11,7 +11,7 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen
-        name="team-management"
+        name="team-membership"
         options={{
           headerShown: false,
         }}

@@ -8,8 +8,7 @@ import { Colors, TextStyles } from "@/constants/theme";
 import { useAuthContext } from "@/context/AuthContext";
 import { useDeleteMembership } from "@/hooks/useDeleteMembership";
 import { useLocationUser } from "@/hooks/useLocationUsers";
-import { AuthorizedRoles, Role, RoleLabels } from "@/types/Membership";
-import { getHighestRole } from "@/utils/roles";
+import { RoleLabels } from "@/types/Membership";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -23,14 +22,12 @@ type UserProfilePageProps = {
 
 const UserProfilePage = ({ id }: UserProfilePageProps) => {
     const { user: authUser } = useAuthContext();
-    const { mutate: deleteMembership, isPending: isDeletingMembership } = useDeleteMembership();
+    const { mutate: deleteMembership } = useDeleteMembership();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [error, setError] = useState("");
     const isOwner = authUser?.sub === id;
-    const { membership: selfMembership } = useLocationUser(authUser?.sub);
     const { membership, user } = useLocationUser(id);
 
-    const isAuthorized = AuthorizedRoles.includes(getHighestRole(selfMembership?.roles ?? []) ?? Role.TEAM_MEMBER);
     const insets = useSafeAreaInsets();
     const styles = createStyles(insets);
 
@@ -102,15 +99,13 @@ const UserProfilePage = ({ id }: UserProfilePageProps) => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.buttonsContainer}>
-                        {(isAuthorized || isOwner) && (
-                            <Button
-                                variant="secondary"
-                                text="Edit Account Information"
-                                iconLeft={EditIcon}
-                                onPress={handleEditProfile}
-                            />
-                        )}
-                        {!isOwner && isAuthorized && (
+                        <Button
+                            variant="secondary"
+                            text="Edit Account Information"
+                            iconLeft={EditIcon}
+                            onPress={handleEditProfile}
+                        />
+                        {!isOwner && (
                             <Button
                                 variant="primary"
                                 text="Delete Team Member"

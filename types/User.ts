@@ -17,6 +17,10 @@ export interface UploadProfilePictureRequest {
   extension: string;
 }
 
+export interface UpdateProfilePictureResponse {
+  picture_url: string;
+}
+
 export interface InviteUserRequest {
   email: string;
   first_name: string;

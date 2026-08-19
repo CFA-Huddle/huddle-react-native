@@ -1,5 +1,4 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
-import CloseIcon from "@/assets/icons/close-outline.svg";
 import PlusIcon from "@/assets/icons/plus.svg";
 import SearchIcon from "@/assets/icons/search.svg";
 import ProfileCardThin from "@/components/settings/ProfileCardThin";
@@ -7,19 +6,21 @@ import ErrorModal from "@/components/shared/ErrorModal";
 import RouteHeading from "@/components/shared/RouteHeading";
 import SubHeading from "@/components/shared/SubHeading";
 import Button from "@/components/ui/Button";
+import SearchBar from "@/components/ui/SearchBar";
 import Spinner from "@/components/ui/Spinner";
 import { Colors, TextStyles } from "@/constants/theme";
 import { useAuthContext } from "@/context/AuthContext";
 import { useLocationContext } from "@/context/LocationContext";
 import { useLocationUsers } from "@/hooks/useLocationUsers";
-import { RoleLabels } from "@/types/Membership";
+import { Role, RoleLabels } from "@/types/Membership";
+import { getHighestRole } from "@/utils/roles";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { Pressable, RefreshControl, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { RefreshControl, SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const TeamManagement = () => {
+const TeamMembershipScreen = () => {
     const insets = useSafeAreaInsets();
 
     const [error, setError] = useState("");
@@ -28,7 +29,7 @@ const TeamManagement = () => {
     const [search, setSearch] = useState("");
     const activeUsers = useMemo(() => users?.filter((user) => user.is_active && user.is_confirmed) ?? [], [users]);
     const invitedUsers = useMemo(() => users?.filter((user) => user.is_active && !user.is_confirmed) ?? [], [users]);
-    const { selectedLocation } = useLocationContext();  
+    const { selectedLocation } = useLocationContext();
     const handleBackButton = () => {
         router.back();
     };
@@ -60,7 +61,7 @@ const TeamManagement = () => {
             });
         }
         return arr;
-   
+
     }, [filteredUsers, filteredInvitedUsers]);
 
     const listHeader = (
@@ -75,7 +76,7 @@ const TeamManagement = () => {
                     iconLeft={ChevronLeftIcon}
                 />
             </View>
-            <RouteHeading>Team Members</RouteHeading>
+            <RouteHeading>Team Membership</RouteHeading>
             <Button
                 text="Invite Team Member"
                 onPress={handleInviteUser}
@@ -83,21 +84,11 @@ const TeamManagement = () => {
                 variant="secondary"
                 iconLeft={PlusIcon}
             />
-            <View style={styles.searchBarContainer}>
-                <SearchIcon width={20} height={20} color={Colors.secondary} />
-                <TextInput
-                    placeholderTextColor={Colors.secondary}
-                    placeholder="Search all team members..."
-                    style={styles.searchBar}
-                    value={search}
-                    onChangeText={setSearch}
-                />
-                {search.length > 0 && (
-                    <Pressable onPress={() => setSearch("")} hitSlop={8}>
-                        <CloseIcon width={20} height={20} color={Colors.secondary} />
-                    </Pressable>
-                )}
-            </View>
+            <SearchBar
+                placeholder="Search all team members..."
+                value={search}
+                onChangeText={setSearch}
+            />
         </>
     );
 
@@ -149,10 +140,7 @@ const TeamManagement = () => {
                             avatarUrl={item.avatar_url ?? undefined}
                             locations={item.memberships.map((membership) => membership.location_id)}
                             role={
-                                item.memberships
-                                    .find((membership) => membership.location_id === selectedLocation)
-                                    ?.roles.map((role) => RoleLabels[role])
-                                    .join(", ") ?? ""
+                                RoleLabels[getHighestRole(item.memberships.find((membership) => membership.location_id === selectedLocation)?.roles ?? []) ?? Role.TEAM_MEMBER]
                             }
                         />
                     </TouchableOpacity>
@@ -187,23 +175,6 @@ const styles = StyleSheet.create({
     },
     inviteButton: {
         marginBottom: 20,
-    },
-    searchBarContainer: {
-        marginBottom: 20,
-        backgroundColor: Colors.darkBackground,
-        borderRadius: 8,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-        paddingHorizontal: 20,
-    },
-    searchBar: {
-        paddingVertical: 10,
-        borderRadius: 8,
-        fontFamily: TextStyles.body.fontFamily,
-        fontSize: TextStyles.body.fontSize,
-        color: Colors.secondary,
-        flex: 1,
     },
     headerButtons: {
         flexDirection: "row",
@@ -256,4 +227,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default TeamManagement;
+export default TeamMembershipScreen;

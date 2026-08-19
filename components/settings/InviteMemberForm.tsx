@@ -184,7 +184,7 @@ const InviteMemberForm = () => {
                                             text="Set role"
                                             onPress={handleSetRole}
                                             style={styles.changeButton}
-                                            variant="secondaryMono"
+                                            variant="outlined"
                                         />
                                     </Card>
                                 </Animated.View>

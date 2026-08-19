@@ -27,8 +27,6 @@ export const RolePriority: Record<Role, number> = {
 
 export const AuthorizedRoles = [Role.DIRECTOR, Role.OPERATOR];
 
-export const HiddenRoles = [Role.ADMIN, Role.OPERATOR];
-
 export interface UserMembership {
   location_id: string;
   roles: Role[];
