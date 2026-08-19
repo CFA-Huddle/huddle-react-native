@@ -1,5 +1,6 @@
 import ChevronDownIcon from "@/assets/icons/chevron-down.svg";
 import LocationPicker from "@/components/shared/LocationPicker";
+import Skeleton from "@/components/ui/Skeleton";
 import { Colors, TextStyles } from "@/constants/theme";
 import { useLocationContext } from "@/context/LocationContext";
 import { LocationLabels } from "@/types/Location";
@@ -8,7 +9,16 @@ import { StyleSheet, Text, View } from "react-native";
 
 const LocationHeader: React.FC = () => {
     const { selectedLocation, locations } = useLocationContext();
-    if (!selectedLocation) return null;
+
+    if (!selectedLocation) return (
+        <View style={styles.container}>
+            <View style={styles.locationContainer}>
+                <Skeleton width={56} height={16} />
+                <Skeleton width={8} height={16} />
+                <Skeleton width={120} height={16} />
+            </View>
+        </View>
+    );
 
     return (
         <>
