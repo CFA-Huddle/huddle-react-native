@@ -7,6 +7,7 @@ import { Platform } from "react-native";
 
 export const Colors = {
   background: "#F7F7F7",
+  darkBackground: "#e3e3e3",
   primary: "#DD0033",
   gradientStart: "#FF033B",
   gradientEnd: "#CA0F1A",
@@ -71,10 +72,25 @@ export const TextStyles = {
     fontSize: 24,
     color: Colors.textPrimary,
   },
+  routeHeading: {
+    fontFamily: Apercu.bold,
+    fontSize: 20,
+    color: Colors.textPrimary,
+  },
+  subHeading: {
+    fontFamily: Apercu.medium,
+    fontSize: 20,
+    color: Colors.textSecondary,
+  },
   body: {
     fontFamily: Apercu.regular,
     fontSize: 16,
     color: Colors.textPrimary,
+  },
+  largeLabel: {
+    fontFamily: Apercu.medium,
+    fontSize: 18,
+    color: Colors.textSecondary,
   },
   label: {
     fontFamily: Apercu.medium,
@@ -85,6 +101,11 @@ export const TextStyles = {
     fontFamily: Apercu.bold,
     fontSize: 18,
     color: Colors.textPrimary,
+  },
+  subTitle: {
+    fontFamily: Apercu.medium,
+    fontSize: 16,
+    color: Colors.textSecondary,
   },
   meta: {
     fontFamily: Apercu.medium,

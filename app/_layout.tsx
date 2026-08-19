@@ -4,15 +4,17 @@ import "react-native-reanimated";
 
 import { CustomFonts } from "@/constants/theme";
 import { AuthProvider, useAuthContext } from "@/context/AuthContext";
-import { queryClient } from "@/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { asyncStoragePersister, queryClient } from "@/queryClient";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { Amplify } from "aws-amplify";
 import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { LocationProvider } from "@/context/LocationContext";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as Notifications from "expo-notifications";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -52,6 +54,7 @@ const InitialLayout = () => {
     <Stack>
       <Stack.Protected guard={isLoggedIn}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(user)/[id]" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected guard={!isLoggedIn}>
@@ -63,16 +66,20 @@ const InitialLayout = () => {
 
 export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <LocationProvider>
-          <KeyboardProvider>
-            <SafeAreaProvider>
-              <InitialLayout />
-            </SafeAreaProvider>
-          </KeyboardProvider>
-        </LocationProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PersistQueryClientProvider persistOptions={{ persister: asyncStoragePersister }} client={queryClient}>
+        <AuthProvider>
+          <BottomSheetModalProvider>
+            <LocationProvider>
+              <KeyboardProvider>
+                <SafeAreaProvider>
+                  <InitialLayout />
+                </SafeAreaProvider>
+              </KeyboardProvider>
+            </LocationProvider>
+          </BottomSheetModalProvider>
+        </AuthProvider>
+      </PersistQueryClientProvider>
+    </GestureHandlerRootView>
   );
 }

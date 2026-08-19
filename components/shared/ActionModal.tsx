@@ -34,6 +34,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
       backdropOpacity={0.4}
       useNativeDriver={true}
       hideModalContentWhileAnimating={true}
+      style={styles.modal}
     >
       <View style={styles.container}>
         <WarningIcon width={60} height={60} fill={Colors.warning} />
@@ -54,6 +55,11 @@ const ActionModal: React.FC<ActionModalProps> = ({
 };
 
 const styles = StyleSheet.create({
+  modal: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     gap: 15,
     borderRadius: 8,

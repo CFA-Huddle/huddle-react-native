@@ -142,6 +142,7 @@ const PostForm: React.FC<Props> = ({ postId, mode }) => {
                 onChange(text);
                 clearErrors("title");
               }}
+              style={styles.textFieldContainer}
               error={errors.title?.message}
             />
           )}
@@ -161,7 +162,7 @@ const PostForm: React.FC<Props> = ({ postId, mode }) => {
                 clearErrors("message");
               }}
               multiline
-              style={styles.message}
+              style={[styles.textFieldContainer, styles.message]}
               error={errors.message?.message}
               onFocus={() => scrollRef.current?.scrollToEnd({ animated: true })}
             />
@@ -193,6 +194,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: Colors.textPrimary,
     marginBottom: 10,
+  },
+  textFieldContainer: {
+    padding: 16,
   },
   message: {
     height: 200,

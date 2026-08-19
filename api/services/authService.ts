@@ -5,6 +5,7 @@ import {
   getCurrentUser,
   signIn,
   signOut,
+  updateUserAttributes,
 } from "aws-amplify/auth";
 
 export const authService = {
@@ -40,5 +41,23 @@ export const authService = {
     } catch {
       return null;
     }
+  },
+  updateUserAttributes: async (firstName: string | undefined, lastName: string | undefined, email: string | undefined, profilePicture: string | undefined = undefined) => {
+    let userAttributes: Record<string, string> = {};
+    if (firstName) {
+      userAttributes.given_name = firstName;
+    }
+    if (lastName) {
+      userAttributes.family_name = lastName;
+    }
+    if (email) {
+      userAttributes.email = email;
+    }
+    if (profilePicture) {
+      userAttributes.picture = profilePicture;
+    }
+    return await updateUserAttributes({
+      userAttributes: userAttributes,
+    });
   },
 };

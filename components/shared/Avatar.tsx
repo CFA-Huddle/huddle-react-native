@@ -1,20 +1,42 @@
 import UserIcon from "@/assets/icons/user.svg";
 import { Colors } from "@/constants/theme";
-import React from "react";
-import { Image, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Image, ImageProps } from "expo-image";
+import React, { useEffect, useState } from "react";
+import { ImageSourcePropType, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
-interface PostCardProps {
-  avatarUrl?: string;
+type AvatarProps = {
+  avatarUrl?: string | ImageSourcePropType;
   style?: StyleProp<ViewStyle>;
-}
+  cachePolicy?: ImageProps["cachePolicy"];
+  size?: number;
+};
 
-const PostCard: React.FC<PostCardProps> = ({ avatarUrl, style }) => {
+const Avatar: React.FC<AvatarProps> = ({
+  avatarUrl,
+  style,
+  cachePolicy = "disk",
+  size = 28,
+}) => {
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+  }, [avatarUrl]);
+
+  const showImage = Boolean(avatarUrl) && !hasError;
+
   return (
-    <View style={[styles.container, style]}>
-      {avatarUrl ? (
-        <Image source={{ uri: avatarUrl }} style={styles.image} />
+    <View style={[styles.container, { width: size, height: size }, style]}>
+      {showImage ? (
+        <Image
+          source={avatarUrl}
+          style={[{ width: size, height: size }]}
+          contentFit="cover"
+          cachePolicy={cachePolicy}
+          onError={() => setHasError(true)}
+        />
       ) : (
-        <UserIcon style={styles.icon} />
+        <UserIcon width={size * 0.75} height={size * 0.75} color={Colors.muted} />
       )}
     </View>
   );
@@ -25,7 +47,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     backgroundColor: Colors.border,
-    borderRadius: 25,
+    borderRadius: 128,
     borderWidth: 0.5,
     borderColor: Colors.border,
     borderStyle: "solid",
@@ -33,15 +55,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
   },
-  image: {
-    width: 28,
-    height: 28,
-  },
   icon: {
-    maxWidth: 22,
-    maxHeight: 22,
     color: Colors.muted,
   },
 });
 
-export default PostCard;
+export default Avatar;

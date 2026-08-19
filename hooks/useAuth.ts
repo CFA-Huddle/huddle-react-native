@@ -1,7 +1,7 @@
+import { authService } from "@/api/services/authService";
 import { notificationService } from "@/api/services/notificationService";
 import { useAuthContext } from "@/context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
-import { authService } from "../api/services/authService";
 
 interface LoginCredentials {
   email: string;

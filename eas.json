@@ -7,17 +7,46 @@
     "development": {
       "autoIncrement": true,
       "developmentClient": true,
-      "distribution": "store"
+      "distribution": "store",
+      "channel": "development"
     },
     "preview": {
       "autoIncrement": true,
-      "distribution": "store"
+      "distribution": "store",
+      "channel": "preview"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "channel": "production"
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "fweinhardt@icloud.com",
+        "ascAppId": "6766762591",
+        "appleTeamId": "AVS62V4S24",
+        "sku": "EX1778042582164",
+        "bundleIdentifier": "com.timweinhardt.huddlereactnative"
+      }
+    },
+    "preview": {
+      "ios": {
+        "appleId": "fweinhardt@icloud.com",
+        "ascAppId": "6766762591",
+        "appleTeamId": "AVS62V4S24",
+        "sku": "EX1778042582164",
+        "bundleIdentifier": "com.timweinhardt.huddlereactnative"
+      }
+    },
+    "development": {
+      "ios": {
+        "appleId": "fweinhardt@icloud.com",
+        "ascAppId": "6766762591",
+        "appleTeamId": "AVS62V4S24",
+        "sku": "EX1778042582164",
+        "bundleIdentifier": "com.timweinhardt.huddlereactnative"
+      }
+    }
   }
 }

@@ -1,10 +1,10 @@
+import Avatar from "@/components/shared/Avatar";
+import Card from "@/components/ui/Card";
 import { TextStyles } from "@/constants/theme";
 import { useLocationContext } from "@/context/LocationContext";
 import { LocationLabels } from "@/types/Location";
 import React from "react";
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
-import Avatar from "../shared/Avatar";
-import Card from "../ui/Card";
 import Skeleton from "../ui/Skeleton";
 
 interface ProfileCardProps {
@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     borderRadius: 9,
   },
   card: {
+    marginBottom: 20,
     padding: 15,
     gap: 9,
   },

@@ -2,12 +2,12 @@ import { Apercu, Colors } from "@/constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
+    StyleProp,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    ViewStyle,
 } from "react-native";
 import { SvgProps } from "react-native-svg";
 
@@ -40,6 +40,17 @@ const VARIANT_CONFIG = {
     activeOpacity: 0.6,
     disabledStyle: {},
   },
+  outlined: {
+    contentColor: Colors.secondary,
+    containerStyle: {
+      backgroundColor: "#ffffff",
+      borderWidth: 1,
+      borderColor: Colors.border,
+    },
+    useGradient: false,
+    activeOpacity: 0.6,
+    disabledStyle: {},
+  },
   transparent: {
     contentColor: Colors.primary,
     containerStyle: {},
@@ -53,6 +64,7 @@ interface ButtonProps {
   text: string;
   variant?: keyof typeof VARIANT_CONFIG;
   disabled?: boolean;
+  iconSize?: number;
   iconLeft?: React.FC<SvgProps>;
   iconRight?: React.FC<SvgProps>;
   onPress: () => void;
@@ -78,6 +90,7 @@ const Button: React.FC<ButtonProps> = ({
   text,
   variant = "primary",
   disabled = false,
+  iconSize = 16,
   iconLeft: IconLeft,
   iconRight: IconRight,
   onPress,
@@ -105,9 +118,9 @@ const Button: React.FC<ButtonProps> = ({
       ]}
     >
       <ContentWrapper style={[styles.content, contentStyle]}>
-        {IconLeft && <IconLeft color={contentColor} />}
+        {IconLeft && <IconLeft color={contentColor} width={iconSize} height={iconSize} />}
         <Text style={[styles.text, { color: contentColor }]}>{text}</Text>
-        {IconRight && <IconRight color={contentColor} />}
+        {IconRight && <IconRight color={contentColor} width={iconSize} height={iconSize} />}
       </ContentWrapper>
     </TouchableOpacity>
   );

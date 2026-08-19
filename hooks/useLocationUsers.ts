@@ -21,7 +21,7 @@ export function useLocationUsers() {
 
 export function useLocationUser(userId?: string) {
   const { selectedLocation } = useLocationContext();
-  const { data, isPending } = useLocationUsers();
+  const { data, isPending } = useLocationUsers(); 
 
   const user = data?.find((u) => u.id === userId);
 

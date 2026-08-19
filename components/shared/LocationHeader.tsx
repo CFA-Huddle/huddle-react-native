@@ -7,19 +7,28 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const LocationHeader: React.FC = () => {
-    const { selectedLocation } = useLocationContext();
+    const { selectedLocation, locations } = useLocationContext();
     if (!selectedLocation) return null;
+
     return (
         <>
             <View style={styles.container}>
-                <LocationPicker>
+                {locations.length > 1 ? (
+                    <LocationPicker>
+                        <View style={styles.locationContainer}>
+                            <Text style={styles.fadedText}>{selectedLocation}</Text>
+                            <Text style={styles.separator}>·</Text>
+                            <Text style={styles.text}>{LocationLabels[selectedLocation]}</Text>
+                            <ChevronDownIcon color={Colors.primary} width={24} height={24} />
+                        </View>
+                    </LocationPicker>
+                ) :
                     <View style={styles.locationContainer}>
                         <Text style={styles.fadedText}>{selectedLocation}</Text>
                         <Text style={styles.separator}>·</Text>
                         <Text style={styles.text}>{LocationLabels[selectedLocation]}</Text>
-                        <ChevronDownIcon color={Colors.primary} width={24} height={24} />
                     </View>
-                </LocationPicker>
+                }
             </View>
         </>
     );
