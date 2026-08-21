@@ -3,6 +3,7 @@ import ModuleIcon from "@/assets/icons/module.svg";
 import PeopleIcon from "@/assets/icons/people.svg";
 import Heading from "@/components/shared/Heading";
 import { Colors, TextStyles } from "@/constants/theme";
+import { router } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -14,17 +15,17 @@ const TrainingScreen = () => {
       <Heading>Training</Heading>
       <View style={styles.gridContainer}>
         <View style={styles.row}>
-          <TouchableOpacity style={styles.gridItem}>
+          <TouchableOpacity style={styles.gridItem} onPress={() => router.push("/training/team-training")} activeOpacity={0.6}>
             <PeopleIcon width={46} height={46} color={Colors.accent} />
             <Text style={styles.gridItemText}>Team Training</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.gridItem}>
+          <TouchableOpacity style={styles.gridItem} onPress={() => router.push("/training/module-editor")} activeOpacity={0.6}>
             <ModuleIcon width={46} height={46} color={Colors.accent} />
             <Text style={styles.gridItemText}>Module Editor</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
-          <TouchableOpacity style={styles.gridItem}>
+          <TouchableOpacity style={styles.gridItem} onPress={() => router.push("/training/training-log")} activeOpacity={0.6}>
             <ChecklistIcon width={46} height={46} color={Colors.accent} />
             <Text style={styles.gridItemText}>Your Training Log</Text>
           </TouchableOpacity>

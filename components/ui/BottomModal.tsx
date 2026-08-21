@@ -1,6 +1,6 @@
 import Button from "@/components/ui/Button";
 import CloseButton from "@/components/ui/CloseButton";
-import { TextStyles } from "@/constants/theme";
+import { Apercu, Colors } from "@/constants/theme";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { StyleSheet, Text } from "react-native";
 
@@ -12,9 +12,10 @@ interface BottomModalProps {
     children: React.ReactNode;
     closeButtonText?: string;
     headerText?: string;
+    saveDisabled?: boolean;
 }
 
-export default function BottomModal({ ref, handleSheetChanges, onClose, onSave, children, closeButtonText = "Done", headerText }: BottomModalProps) {
+export default function BottomModal({ ref, handleSheetChanges, onClose, onSave, children, closeButtonText = "Done", headerText, saveDisabled = false }: BottomModalProps) {
     const handleClose = () => {
         ref.current?.dismiss();
         onClose?.();
@@ -25,7 +26,17 @@ export default function BottomModal({ ref, handleSheetChanges, onClose, onSave, 
         onSave?.();
     };
     return (
-        <BottomSheetModal ref={ref} onChange={handleSheetChanges ?? (() => { })} enableDynamicSizing={true} style={styles.modal}>
+        <BottomSheetModal
+            ref={ref}
+            onChange={handleSheetChanges ?? (() => { })}
+            enableDynamicSizing={true}
+            keyboardBehavior="interactive"
+            keyboardBlurBehavior="restore"
+            android_keyboardInputMode="adjustResize"
+            enableBlurKeyboardOnGesture
+            handleIndicatorStyle={styles.handleIndicator}
+            style={styles.modal}
+        >
             <BottomSheetView style={styles.container}>
                 <CloseButton style={styles.closeButton} onPress={handleClose} />
                 <Text style={styles.headerText}>{headerText}</Text>
@@ -35,6 +46,7 @@ export default function BottomModal({ ref, handleSheetChanges, onClose, onSave, 
                     onPress={handleSave}
                     variant="primary"
                     style={styles.button}
+                    disabled={saveDisabled}
                 />
             </BottomSheetView>
         </BottomSheetModal>
@@ -50,8 +62,14 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.34,
         shadowRadius: 6.27,
-        
+
         elevation: 10,
+    },
+    handleIndicator: {
+        width: 24,
+        height: 4,
+        borderRadius: 2.5,
+        backgroundColor: Colors.secondary,
     },
     closeButton: {
         position: "absolute",
@@ -59,16 +77,17 @@ const styles = StyleSheet.create({
         right: 20,
     },
     headerText: {
-        fontFamily: TextStyles.subHeading.fontFamily,
-        fontSize: TextStyles.subTitle.fontSize,
-        color: TextStyles.heading.color,
+        fontFamily: Apercu.bold,
+        fontSize: 16,
+        color: Colors.textPrimary,
+        letterSpacing: -0.32,
         marginBottom: 16,
     },
     button: {
         width: "100%",
         marginTop: 20,
         marginHorizontal: 20,
-        marginBottom: 20,
+        marginBottom: 32,
     },
     container: {
         flex: 1,
@@ -77,5 +96,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         zIndex: 1000,
+        overflow: "visible",
     },
 });

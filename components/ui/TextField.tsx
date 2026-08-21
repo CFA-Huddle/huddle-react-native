@@ -2,6 +2,7 @@ import EyeOffIcon from "@/assets/icons/eye-off-outline.svg";
 import EyeIcon from "@/assets/icons/eye-outline.svg";
 import { Apercu, Colors } from "@/constants/theme";
 import { useShake } from "@/hooks/useShake";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useState } from "react";
 import {
@@ -22,17 +23,21 @@ interface TextFieldProps extends TextInputProps {
   inputContainerStyle?: ViewStyle;
   containerStyle?: ViewStyle;
   textFieldStyle?: TextStyle;
+  inBottomSheet?: boolean;
 }
 
 const TextField: React.FC<TextFieldProps> = ({
   label,
   error,
   containerStyle,
+  inputContainerStyle,
   style,
   secureTextEntry,
+  inBottomSheet = false,
   ...rest
 }) => {
   const [passwordHidden, setPasswordHidden] = useState(true);
+  const Input = inBottomSheet ? BottomSheetTextInput : TextInput;
 
   const togglePasswordVisibility = () => {
     setPasswordHidden((prev) => !prev);
@@ -53,10 +58,11 @@ const TextField: React.FC<TextFieldProps> = ({
         style={[
           styles.inputContainer,
           error ? styles.inputContainerError : null,
+          inputContainerStyle,
           animatedStyle,
         ]}
       >
-        <TextInput
+        <Input
           style={[styles.input, style]}
           placeholderTextColor={Colors.textMuted}
           secureTextEntry={secureTextEntry ? passwordHidden : false}
