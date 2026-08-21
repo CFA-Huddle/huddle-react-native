@@ -13,16 +13,19 @@ interface BottomModalProps {
     closeButtonText?: string;
     headerText?: string;
     saveDisabled?: boolean;
+    dismissOnSave?: boolean;
 }
 
-export default function BottomModal({ ref, handleSheetChanges, onClose, onSave, children, closeButtonText = "Done", headerText, saveDisabled = false }: BottomModalProps) {
+export default function BottomModal({ ref, handleSheetChanges, onClose, onSave, children, closeButtonText = "Done", headerText, saveDisabled = false, dismissOnSave = true }: BottomModalProps) {
     const handleClose = () => {
         ref.current?.dismiss();
         onClose?.();
     };
 
     const handleSave = () => {
-        ref.current?.dismiss();
+        if (dismissOnSave) {
+            ref.current?.dismiss();
+        }
         onSave?.();
     };
     return (

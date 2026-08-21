@@ -60,6 +60,7 @@ const ModuleEditor = () => {
           )}
           stickySectionHeadersEnabled={false}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+          ListFooterComponent={() => <View style={{ height: 40 }} />}
           ListHeaderComponent={() => (
             <>
               <View style={styles.headerButtons}>
@@ -94,10 +95,10 @@ const makeStyles = (insets: EdgeInsets) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 20,
     },
     sectionList: {
       paddingTop: insets.top,
+      paddingHorizontal: 20,
     },
     sectionHeader: {
       fontSize: TextStyles.title.fontSize,

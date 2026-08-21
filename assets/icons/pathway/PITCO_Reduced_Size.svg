@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="40" height="40" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 40 40">
+  <defs>
+    <style>
+      .cls-1 {
+        filter: url(#drop-shadow-1);
+        stroke-width: .00053px;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        stroke: #000;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-3, .cls-4 {
+        fill: none;
+      }
+
+      .cls-2 {
+        stroke-width: .2139px;
+      }
+
+      .cls-2, .cls-5 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        stroke-width: .26737px;
+      }
+
+      .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-11, .cls-12, .cls-5, .cls-13, .cls-14 {
+        stroke-width: 0px;
+      }
+
+      .cls-4 {
+        stroke-width: .04011px;
+      }
+
+      .cls-7 {
+        fill: #d6d6d6;
+      }
+
+      .cls-8 {
+        fill: #aaa;
+      }
+
+      .cls-9 {
+        fill: #939393;
+      }
+
+      .cls-10 {
+        fill: #c1c1c1;
+      }
+
+      .cls-11 {
+        fill: #333;
+      }
+
+      .cls-12 {
+        fill: #940929;
+      }
+
+      .cls-13 {
+        fill: #f4f1ec;
+      }
+
+      .cls-14 {
+        fill: #004f71;
+      }
+    </style>
+    <filter id="drop-shadow-1" filterUnits="userSpaceOnUse">
+      <feOffset dx=".37432" dy=".37432"/>
+      <feGaussianBlur result="blur" stdDeviation=".26737"/>
+      <feFlood flood-color="#000" flood-opacity=".75"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g>
+    <rect class="cls-8" x="27.23607" y="37.69588" width=".68477" height=".87586" rx=".21951" ry=".21951"/>
+    <path class="cls-10" d="m28.10775,38.02564c-.0083.01261-.19135.2803-.51399.26423-.28672-.01428-.44049-.24053-.456-.26423v-3.24951h.97v3.24951Z"/>
+  </g>
+  <g>
+    <rect class="cls-10" x="27.58693" y="38.60928" width="1.04165" height="1.33234" rx=".33391" ry=".33391"/>
+    <path class="cls-7" d="m28.81502,38.79221c-.01794.02602-.2764.38718-.7324.37386-.42495-.01241-.65844-.33943-.68214-.37386v-4.73871h1.41454v4.73871Z"/>
+  </g>
+  <g>
+    <rect class="cls-8" x="12.15751" y="37.69588" width=".68477" height=".87586" rx=".21951" ry=".21951"/>
+    <path class="cls-10" d="m12.9849,38.02564c-.11808.17785-.32017.27955-.52801.26423-.27678-.0204-.42485-.23809-.442-.26423v-3.24951h.97001v3.24951Z"/>
+  </g>
+  <path class="cls-7" d="m27.97047,8.52539H9.85576v26.51377c0,.23993.16231.43465.36229.43465h19.56389c.19999,0,.36229-.19472.36229-.43465V8.52539h-2.17377Z"/>
+  <g>
+    <rect class="cls-10" x="11.46289" y="38.60928" width="1.04165" height="1.33234" rx=".33391" ry=".33391"/>
+    <path class="cls-7" d="m12.69098,38.79221c-.02147.03062-.26877.37041-.7114.3683-.43749-.00209-.68076-.33637-.70314-.3683v-4.73871h1.41454v4.73871Z"/>
+  </g>
+  <rect class="cls-7" x="11.24149" width="17.51703" height="7.8008"/>
+  <path class="cls-7" d="m30.50653,8.52539H9.49347c-.19999,0-.36229-.16231-.36229-.36229v-.72459c0-.19999.16231-.36229.36229-.36229h21.01307c.19999,0,.36229.16231.36229.36229v.72459c0,.19999-.16231.36229-.36229.36229"/>
+  <rect class="cls-14" x="10.82335" y="13.70302" width="4.07448" height="1.6977" rx=".37535" ry=".37535"/>
+  <rect class="cls-14" x="26.11182" y="9.82798" width="2.6467" height="5.22892" rx=".61092" ry=".61092"/>
+  <line class="cls-3" x1="9.85576" y1="17.44727" x2="30.14424" y2="17.44727"/>
+  <line class="cls-4" x1="9.85576" y1="16.39393" x2="30.14424" y2="16.39393"/>
+  <line class="cls-1" x1="11.24149" y1="6.86232" x2="28.75851" y2="6.86232"/>
+  <rect class="cls-9" x="16.49094" y="10.26662" width="7.01812" height="3.8499"/>
+  <rect class="cls-2" x="26.63202" y="10.91463" width="1.6063" height="1.02624"/>
+  <rect class="cls-2" x="26.63202" y="12.96248" width="1.6063" height="1.02624"/>
+  <rect class="cls-12" x="18.19377" y="10.91463" width="3.64408" height="1.02624"/>
+  <rect class="cls-5" x="16.88727" y="10.91463" width=".98275" height=".98275" rx=".09378" ry=".09378"/>
+  <rect class="cls-5" x="16.88727" y="12.4711" width=".98275" height=".98275" rx=".09378" ry=".09378"/>
+  <rect class="cls-5" x="18.10464" y="12.4711" width=".98275" height=".98275" rx=".09378" ry=".09378"/>
+  <rect class="cls-5" x="19.36945" y="12.4711" width="2.4684" height=".98275" rx=".14863" ry=".14863"/>
+  <rect class="cls-5" x="22.08878" y="12.4711" width=".98275" height=".98275" rx=".09378" ry=".09378"/>
+  <rect class="cls-5" x="22.08878" y="10.91463" width=".98275" height=".98275" rx=".09378" ry=".09378"/>
+  <g>
+    <circle class="cls-13" cx="11.75703" cy=".69505" r=".22269"/>
+    <circle class="cls-13" cx="12.31647" cy=".69505" r=".22269"/>
+  </g>
+  <g>
+    <circle class="cls-13" cx="27.6386" cy=".69505" r=".22269"/>
+    <circle class="cls-13" cx="28.19804" cy=".69505" r=".22269"/>
+  </g>
+  <rect class="cls-6" x="11.10957" y="22.64187" width="5.38137" height="1.91754"/>
+  <rect class="cls-11" x="11.59405" y="23.4937" width="4.32171" height=".65453"/>
+</svg>

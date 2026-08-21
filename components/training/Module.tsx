@@ -1,7 +1,7 @@
 import CheckmarkIcon from "@/assets/icons/checkmark.svg";
+import PathwayIcon from "@/components/training/PathwayIcon";
 import { Colors, TextStyles } from "@/constants/theme";
 import { Module } from "@/types/Modules";
-import { Image } from "expo-image";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, G } from "react-native-svg";
@@ -19,7 +19,7 @@ export const ModuleItem = ({ module, progress, onPress }: { module: Module, prog
       disabled={!onPress}
       activeOpacity={0.6}
     >
-      <Image source={module.icon} style={styles.moduleIcon} cachePolicy="memory-disk" />
+      <PathwayIcon icon={module.icon} size={40} />
       <Text style={styles.moduleTitle} numberOfLines={1}>{module.title}</Text>
       {progress != null && (
         <View style={styles.progressRow}>
@@ -82,11 +82,6 @@ const makeStyles = (insets: EdgeInsets) =>
         paddingHorizontal: 20,
         borderRadius: 8,
       },
-      moduleIcon: {
-        width: 40,
-        height: 40,
-      },
-  
       moduleTitle: {
         flex: 1,
         fontSize: TextStyles.subTitle.fontSize,

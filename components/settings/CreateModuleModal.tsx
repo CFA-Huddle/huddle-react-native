@@ -1,17 +1,19 @@
+import IconPickerModal from "@/components/training/IconPickerModal";
 import BottomModal from "@/components/ui/BottomModal";
 import Combobox from "@/components/ui/Combobox";
 import TextField from "@/components/ui/TextField";
 import { MODULE_GROUPS } from "@/constants/modules";
 import { Apercu, Colors } from "@/constants/theme";
 import { Module } from "@/types/Modules";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { BottomSheetModal, useBottomSheetModal } from "@gorhom/bottom-sheet";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useRef, useState } from "react";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
 
 const EMPTY_MODULE: Module = {
     id: "",
     title: "",
-    icon: "https://media.pathway.cfahome.com/img/procedures/WHED.svg",
+    icon: "",
     group: "",
 };
 
@@ -23,57 +25,82 @@ interface CreateModuleModalProps {
 export default function CreateModuleModal({ ref, onSave }: CreateModuleModalProps) {
     const [module, setModule] = useState<Module>(EMPTY_MODULE);
     const [groups, setGroups] = useState<string[]>([...MODULE_GROUPS]);
+    const iconPickerRef = useRef<BottomSheetModal>(null);
+    const { dismissAll } = useBottomSheetModal();
 
-    const handleSave = () => {
+    // Dismiss the modal when the user navigates away from the screen
+    useFocusEffect(
+        useCallback(() => {
+            return () => {
+                dismissAll();
+            };
+        }, [dismissAll])
+    );
+
+    const handleContinue = () => {
+        Keyboard.dismiss();
+        iconPickerRef.current?.present();
+    };
+
+    const handleIconSelect = (icon: string) => {
         const group = module.group.trim();
-        onSave({ ...module, group });
+        const nextModule = { ...module, icon, group };
+        onSave(nextModule);
         if (group && !groups.includes(group)) {
             setGroups((current) => [...current, group]);
         }
-        console.log(module);
+        dismissAll();
         setModule(EMPTY_MODULE);
     };
 
     return (
-        <BottomModal
-            ref={ref}
-            onSave={handleSave}
-            headerText="Create New Module"
-            closeButtonText="Continue"
-            saveDisabled={!module.title.trim() || !module.group.trim()}
-        >
-            <View style={styles.modalContent}>
-                <View style={styles.field}>
-                    <Text style={styles.label}>Module Name</Text>
-                    <TextField
-                        inBottomSheet
-                        placeholder="Enter name..."
-                        value={module.title}
-                        onChangeText={(text) => {
-                            setModule({
-                                ...module,
-                                title: text,
-                                id: text.toLowerCase().replace(/ /g, "-"),
-                            });
-                        }}
-                        containerStyle={styles.fieldControl}
-                        inputContainerStyle={styles.inputContainer}
-                        style={styles.input}
-                        returnKeyType="done"
-                    />
+        <>
+            <IconPickerModal
+                ref={iconPickerRef}
+                selectedIcon={module.icon}
+                onSelect={handleIconSelect}
+            />
+            <BottomModal
+                ref={ref}
+                onSave={handleContinue}
+                headerText="Create New Module"
+                closeButtonText="Continue"
+                saveDisabled={!module.title.trim() || !module.group.trim()}
+                dismissOnSave={false}
+            >
+                <View style={styles.modalContent}>
+                    <View style={styles.field}>
+                        <Text style={styles.label}>Module Name</Text>
+                        <TextField
+                            inBottomSheet
+                            placeholder="Enter name..."
+                            value={module.title}
+                            onChangeText={(text) => {
+                                setModule({
+                                    ...module,
+                                    title: text,
+                                    id: text.toLowerCase().replace(/ /g, "-"),
+                                });
+                            }}
+                            containerStyle={styles.fieldControl}
+                            inputContainerStyle={styles.inputContainer}
+                            style={styles.input}
+                            returnKeyType="done"
+                        />
+                    </View>
+                    <View style={[styles.field, styles.groupField]}>
+                        <Text style={styles.label}>Group</Text>
+                        <Combobox
+                            inBottomSheet
+                            options={groups}
+                            value={module.group}
+                            onChange={(group) => setModule((current) => ({ ...current, group }))}
+                            placeholder="Select a group"
+                        />
+                    </View>
                 </View>
-                <View style={[styles.field, styles.groupField]}>
-                    <Text style={styles.label}>Group</Text>
-                    <Combobox
-                        inBottomSheet
-                        options={groups}
-                        value={module.group}
-                        onChange={(group) => setModule((current) => ({ ...current, group }))}
-                        placeholder="Select a group"
-                    />
-                </View>
-            </View>
-        </BottomModal>
+            </BottomModal>
+        </>
     );
 }
 
