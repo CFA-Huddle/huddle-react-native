@@ -3,6 +3,12 @@ export function isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
+export function isValidUrl(url: string): boolean {
+  const urlRegex =
+    /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/i;
+  return urlRegex.test(url);
+}
+
 export function formatLongDateTime(dateInput: string | Date): string {
   const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
 
@@ -25,4 +31,8 @@ export function formatLongDateTime(dateInput: string | Date): string {
     .toLowerCase();
 
   return `${datePart} at ${timePart}`;
+}
+
+export function removeUrlProtocol(url: string): string {
+  return url.replace(/^https?:\/\//i, "");
 }

@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   input: {
-    padding: 20,
+    padding: 16,
     fontSize: 16,
     fontFamily: Apercu.regular,
     color: Colors.textPrimary,

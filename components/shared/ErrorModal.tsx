@@ -23,10 +23,8 @@ const ErrorModal: React.FC<ErrorModalProps> = ({
   return (
     <Modal
       isVisible={visible}
-      animationIn="zoomIn"
-      animationOut="zoomOut"
+      animationIn="fadeIn"
       backdropTransitionInTiming={200}
-      backdropTransitionOutTiming={200}
       backdropOpacity={0.4}
       useNativeDriver
       hideModalContentWhileAnimating

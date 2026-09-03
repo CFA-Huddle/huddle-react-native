@@ -27,10 +27,8 @@ const ActionModal: React.FC<ActionModalProps> = ({
   return (
     <Modal
       isVisible={visible}
-      animationIn="zoomIn"
-      animationOut="zoomOut"
+      animationIn="fadeIn"
       backdropTransitionInTiming={200}
-      backdropTransitionOutTiming={0}
       backdropOpacity={0.4}
       useNativeDriver={true}
       hideModalContentWhileAnimating={true}

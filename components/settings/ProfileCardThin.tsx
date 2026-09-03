@@ -24,7 +24,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   return (
     <Card style={[styles.card, style]}>
       <View style={styles.header}>
-        <Avatar avatarUrl={avatarUrl} size={42}/>
+        <Avatar avatarUrl={avatarUrl} size={42} />
         <View style={styles.nameContainer}>
           <Text style={styles.name} numberOfLines={1}>
             {name}
@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
     borderRadius: 9,
   },
   card: {
-    marginBottom: 12,
     padding: 15,
     gap: 9,
   },

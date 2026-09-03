@@ -1,4 +1,5 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
+import TrashOutline from "@/assets/icons/trash-outline.svg";
 import ErrorModal from "@/components/shared/ErrorModal";
 import IconPickerModal from "@/components/training/IconPickerModal";
 import ModuleIcon from "@/components/training/ModuleIcon";
@@ -8,9 +9,9 @@ import Combobox from "@/components/ui/Combobox";
 import Spinner from "@/components/ui/Spinner";
 import TextField from "@/components/ui/TextField";
 import { getModuleIconLabel } from "@/constants/moduleIcons";
-import { MODULE_GROUPS } from "@/constants/modules";
 import { Apercu, Colors, TextStyles } from "@/constants/theme";
 import { useCreateModule } from "@/hooks/useCreateModule";
+import { useDeleteModule } from "@/hooks/useDeleteModule";
 import { useModule, useModules } from "@/hooks/useModules";
 import { useShake } from "@/hooks/useShake";
 import { useUpdateModule } from "@/hooks/useUpdateModule";
@@ -24,6 +25,7 @@ import {
 } from "react-native-keyboard-controller";
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ActionModal from "../shared/ActionModal";
 
 type Props = {
   moduleId?: string;
@@ -44,13 +46,28 @@ const ModuleForm: React.FC<Props> = ({ moduleId, mode }) => {
 
   const create = useCreateModule();
   const update = useUpdateModule();
+  const deleteMutation = useDeleteModule();
+
   const { data: modules } = useModules();
   const { data: module } = useModule(moduleId);
 
-  const error = isEditing ? update.error : create.error;
-  const isError = isEditing ? update.isError : create.isError;
-  const isPending = isEditing ? update.isPending : create.isPending;
-  const resetMutation = isEditing ? update.reset : create.reset;
+  const error = isEditing
+    ? (update.error ?? deleteMutation.error)
+    : create.error;
+
+  const isError = isEditing
+    ? update.isError || deleteMutation.isError
+    : create.isError;
+
+  const isPending = isEditing
+    ? update.isPending || deleteMutation.isPending
+    : create.isPending;
+
+  const resetMutation = () => {
+    if (update.isError) update.reset();
+    if (create.isError) create.reset();
+    if (deleteMutation.isError) deleteMutation.reset();
+  };
 
   const {
     control,
@@ -66,8 +83,25 @@ const ModuleForm: React.FC<Props> = ({ moduleId, mode }) => {
       group_name: "",
       icon: "",
     },
-    mode: "onChange",
+    mode: "onSubmit",
   });
+
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [dismissedError, setDismissedError] = useState<Error | null>(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  useEffect(() => {
+    if (!error) {
+      setShowErrorModal(false);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setShowErrorModal(true);
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [error]);
 
   const icon = watch("icon");
   const iconError = errors.icon?.message;
@@ -76,7 +110,6 @@ const ModuleForm: React.FC<Props> = ({ moduleId, mode }) => {
   const groups = useMemo(
     () => [
       ...new Set([
-        ...MODULE_GROUPS,
         ...(modules ?? []).map((item) => item.group_name).filter(Boolean),
       ]),
     ],
@@ -134,22 +167,47 @@ const ModuleForm: React.FC<Props> = ({ moduleId, mode }) => {
     setIsIconPickerVisible(true);
   };
 
+  const handleDelete = () => {
+    if (!moduleId) return;
+    setIsDeleteModalVisible(false);
+    deleteMutation.mutate(moduleId, {
+      onSuccess: () => {
+        router.dismissTo("/training/module-editor");
+      },
+    });
+  };
+
   return (
     <>
       <Spinner isVisible={isPending} />
 
+      <ActionModal
+        title="Delete Module?"
+        subtitle="Are you sure that you would like to delete this module? This cannot be undone."
+        visible={isDeleteModalVisible}
+        actionLabel="Delete Module"
+        onAction={handleDelete}
+        onCancel={() => setIsDeleteModalVisible(false)}
+      />
+
       <ErrorModal
-        visible={isError}
-        errorCode={error instanceof Error ? error.message : "Unknown error"}
-        onClose={resetMutation}
-        subtitle="Something went wrong. Please try again."
+        errorCode={error?.message ?? ""}
+        visible={showErrorModal && error !== dismissedError}
+        onClose={() => {
+          setShowErrorModal(false);
+          setDismissedError(error);
+        }}
+        subtitle="An unexpected error has occurred. Please try again later."
       />
 
       <IconPickerModal
         visible={isIconPickerVisible}
         selectedIcon={icon}
         onSelect={(nextIcon) => {
-          setValue("icon", nextIcon, { shouldDirty: true, shouldValidate: true });
+          setValue("icon", nextIcon, {
+            shouldDirty: true,
+            shouldValidate: true,
+          });
           clearErrors("icon");
         }}
         onClose={() => setIsIconPickerVisible(false)}
@@ -160,14 +218,25 @@ const ModuleForm: React.FC<Props> = ({ moduleId, mode }) => {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={[styles.container, { paddingTop: insets.top }]}
       >
-        <Button
-          text="Back"
-          onPress={handleBackButton}
-          style={styles.backButton}
-          contentStyle={styles.backButtonContent}
-          variant="transparent"
-          iconLeft={ChevronLeftIcon}
-        />
+        <View style={styles.headerButtons}>
+          <Button
+            text="Back"
+            onPress={handleBackButton}
+            style={styles.backButton}
+            contentStyle={styles.backButtonContent}
+            variant="transparent"
+            iconLeft={ChevronLeftIcon}
+          />
+          {isEditing && (
+            <Button
+              text="Delete"
+              onPress={() => setIsDeleteModalVisible(true)}
+              style={styles.backButton}
+              variant="secondary"
+              iconLeft={TrashOutline}
+            />
+          )}
+        </View>
         <Text style={styles.title}>
           {isEditing ? "Edit Module" : "Create New Module"}
         </Text>
@@ -185,7 +254,6 @@ const ModuleForm: React.FC<Props> = ({ moduleId, mode }) => {
                 onChange(text);
                 clearErrors("name");
               }}
-              style={styles.textFieldContainer}
               error={errors.name?.message}
             />
           )}
@@ -205,7 +273,7 @@ const ModuleForm: React.FC<Props> = ({ moduleId, mode }) => {
                   onChange(next);
                   clearErrors("group_name");
                 }}
-                placeholder="Select a group"
+                placeholder="Enter group name..."
               />
             )}
           />
@@ -214,13 +282,13 @@ const ModuleForm: React.FC<Props> = ({ moduleId, mode }) => {
           )}
         </View>
 
-        <Text style={[TextStyles.largeLabel, styles.label]}>Icon</Text>
         <Controller
           control={control}
           name="icon"
           rules={{ required: "Icon is required" }}
           render={({ field: { value } }) => (
             <View style={styles.iconFieldContainer}>
+              <Text style={[TextStyles.body, styles.label]}>Icon</Text>
               <Animated.View
                 style={[iconError ? styles.iconCardError : null, animatedStyle]}
               >
@@ -265,6 +333,12 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 12,
   },
+  headerButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
   backButton: { marginTop: 30, alignSelf: "flex-start", marginBottom: 10 },
   backButtonContent: { paddingLeft: 0 },
   title: {
@@ -288,7 +362,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   label: {
-    marginBottom: 6,
+    color: Colors.secondary,
+    marginBottom: 4,
   },
   iconFieldContainer: {
     marginBottom: 16,

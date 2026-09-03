@@ -1,9 +1,18 @@
 import ModuleIcon from "@/components/training/ModuleIcon";
-import { getModuleIconLabel, MODULE_ICON_CATEGORIES } from "@/constants/moduleIcons";
-import { Apercu, Colors } from "@/constants/theme";
+import {
+  getModuleIconLabel,
+  MODULE_ICON_CATEGORIES,
+} from "@/constants/moduleIcons";
+import { Colors, TextStyles } from "@/constants/theme";
 import * as Haptics from "expo-haptics";
 import { useMemo } from "react";
-import { SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  SectionList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const LIST_PADDING_HORIZONTAL = 20;
 const ICON_GAP = 11;
@@ -30,7 +39,10 @@ function chunkIcons(icons: string[], size: number) {
 }
 
 function getGridMetrics(containerWidth: number) {
-  const contentWidth = Math.max(0, containerWidth - LIST_PADDING_HORIZONTAL * 2);
+  const contentWidth = Math.max(
+    0,
+    containerWidth - LIST_PADDING_HORIZONTAL * 2,
+  );
   const columns = Math.max(
     1,
     Math.floor((contentWidth + ICON_GAP) / (MIN_CELL_SIZE + ICON_GAP)),
@@ -40,11 +52,12 @@ function getGridMetrics(containerWidth: number) {
   return { columns, cellSize };
 }
 
-export default function IconPicker({ selectedIcon, onSelect, width }: IconPickerProps) {
-  const { columns, cellSize } = useMemo(
-    () => getGridMetrics(width),
-    [width],
-  );
+export default function IconPicker({
+  selectedIcon,
+  onSelect,
+  width,
+}: IconPickerProps) {
+  const { columns, cellSize } = useMemo(() => getGridMetrics(width), [width]);
 
   const sections = useMemo<IconSection[]>(
     () =>
@@ -52,7 +65,7 @@ export default function IconPicker({ selectedIcon, onSelect, width }: IconPicker
         title: category.name,
         data: chunkIcons(category.icons, columns),
       })),
-    [columns]
+    [columns],
   );
 
   const handleSelect = (icon: string) => {
@@ -75,7 +88,7 @@ export default function IconPicker({ selectedIcon, onSelect, width }: IconPicker
       initialNumToRender={6}
       windowSize={8}
       renderSectionHeader={({ section: { title } }) => (
-        <Text style={styles.sectionHeader}>{title}</Text>
+        <Text style={[styles.sectionHeader, TextStyles.label]}>{title}</Text>
       )}
       renderItem={({ item }) => (
         <View style={styles.row}>
@@ -84,9 +97,13 @@ export default function IconPicker({ selectedIcon, onSelect, width }: IconPicker
             return (
               <TouchableOpacity
                 key={icon}
-                style={[styles.cell, { width: cellSize }, selected && styles.cellSelected]}
+                style={[
+                  styles.cell,
+                  { width: cellSize },
+                  selected && styles.cellSelected,
+                ]}
                 onPress={() => handleSelect(icon)}
-                activeOpacity={0.6}
+                activeOpacity={1}
                 accessibilityRole="button"
                 accessibilityState={{ selected }}
                 accessibilityLabel={getModuleIconLabel(icon)}
@@ -111,9 +128,6 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   sectionHeader: {
-    fontSize: 18,
-    fontFamily: Apercu.regular,
-    color: Colors.textSecondary,
     marginTop: 8,
     marginBottom: 11,
   },
@@ -130,7 +144,7 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   cellSelected: {
-    backgroundColor: "#FAFAFA",
-    borderColor: Colors.textPrimary,
+    backgroundColor: "#FFFFFF",
+    borderColor: Colors.primary,
   },
 });

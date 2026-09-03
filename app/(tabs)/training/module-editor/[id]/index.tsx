@@ -6,8 +6,8 @@ import ActionModal from "@/components/shared/ActionModal";
 import ErrorModal from "@/components/shared/ErrorModal";
 import RouteHeading from "@/components/shared/RouteHeading";
 import AddItemModal from "@/components/training/AddItemModal";
+import { TaskItem } from "@/components/training/TaskItem";
 import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
 import Spinner from "@/components/ui/Spinner";
 import { Colors, TextStyles } from "@/constants/theme";
 import { useCreateTask } from "@/hooks/useCreateTask";
@@ -17,7 +17,12 @@ import { Task } from "@/types/Modules";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { router, useLocalSearchParams } from "expo-router";
 import { useMemo, useRef, useState } from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import { Circle } from "react-native-animated-spinkit";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -26,16 +31,17 @@ const ModuleEditorDetail = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: module, error, isLoading } = useModule(id);
   const createTask = useCreateTask();
-  const { mutate: deleteTask, error: deleteError, reset: resetDelete } = useDeleteTask();
+  const {
+    mutate: deleteTask,
+    error: deleteError,
+    reset: resetDelete,
+  } = useDeleteTask();
   const addItemRef = useRef<BottomSheetModal>(null);
   const [dismissedError, setDismissedError] = useState<Error | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
   const [isDeleteErrorVisible, setIsDeleteErrorVisible] = useState(false);
 
-  const tasks = useMemo(
-    () => module?.tasks ?? [],
-    [module?.tasks],
-  );
+  const tasks = useMemo(() => module?.tasks ?? [], [module?.tasks]);
 
   const handleBackButton = () => {
     router.back();
@@ -45,15 +51,19 @@ const ModuleEditorDetail = () => {
     router.navigate(`/training/module-editor/${id}/edit`);
   };
 
-  const handleAddItem = ({ name, link_url }: { name: string; link_url?: string }) => {
+  const handleAddItem = ({
+    name,
+    link_url,
+  }: {
+    name: string;
+    link_url?: string;
+  }) => {
     if (!id) return;
-    addItemRef.current?.dismiss()
-    createTask.mutate(
-      {
-        moduleId: id,
-        payload: { name, ...(link_url ? { link_url } : {}) },
-      }
-    );
+    addItemRef.current?.dismiss();
+    createTask.mutate({
+      moduleId: id,
+      payload: { name, ...(link_url ? { link_url } : {}) },
+    });
   };
 
   const handleDelete = () => {
@@ -86,7 +96,11 @@ const ModuleEditorDetail = () => {
       />
       <ErrorModal
         visible={createTask.isError}
-        errorCode={createTask.error instanceof Error ? createTask.error.message : "Unknown error"}
+        errorCode={
+          createTask.error instanceof Error
+            ? createTask.error.message
+            : "Unknown error"
+        }
         onClose={createTask.reset}
         subtitle="We couldn't add this item. Please try again."
       />
@@ -132,7 +146,9 @@ const ModuleEditorDetail = () => {
           onPress={() => addItemRef.current?.present()}
           iconLeft={PlusIcon}
         />
-        <Text style={styles.checklistHeading}>Checklist</Text>
+        <Text style={[styles.checklistHeading, TextStyles.largeLabel]}>
+          Checklist
+        </Text>
       </View>
       {isLoading && !module ? (
         <View style={styles.loadingContainer}>
@@ -147,18 +163,13 @@ const ModuleEditorDetail = () => {
           ListEmptyComponent={
             <View style={styles.noResultsContainer}>
               <CheckListIcon width={48} height={48} color={Colors.secondary} />
-              <Text style={styles.noResultsText}>{`This module has no tasks`}</Text>
+              <Text
+                style={styles.noResultsText}
+              >{`This module has no items`}</Text>
             </View>
           }
           renderItem={({ item }) => (
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onLongPress={() => setTaskToDelete(item)}
-            >
-              <Card style={styles.taskCard}>
-                <Text style={styles.taskText}>{item.name}</Text>
-              </Card>
-            </TouchableOpacity>
+            <TaskItem item={item} onLongPress={() => setTaskToDelete(item)} />
           )}
         />
       )}
@@ -199,9 +210,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   checklistHeading: {
-    fontFamily: TextStyles.largeLabel.fontFamily,
-    fontSize: TextStyles.largeLabel.fontSize,
-    color: TextStyles.largeLabel.color,
     marginTop: 16,
     marginBottom: 16,
   },
@@ -210,12 +218,27 @@ const styles = StyleSheet.create({
   },
   taskCard: {
     padding: 20,
+    display: "flex",
+    gap: 10,
+    alignItems: "flex-start",
   },
-  taskText: {
+  taskNameText: {
     fontFamily: TextStyles.body.fontFamily,
     fontSize: TextStyles.body.fontSize,
     color: TextStyles.body.color,
-    lineHeight: 18,
+    lineHeight: 22,
+  },
+  taskLink: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 6,
+    alignItems: "center",
+  },
+  taskLinkText: {
+    fontFamily: TextStyles.hint.fontFamily,
+    fontSize: TextStyles.hint.fontSize,
+    color: Colors.accent,
+    flex: 1,
   },
   noResultsContainer: {
     flex: 1,

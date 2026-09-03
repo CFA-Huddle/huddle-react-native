@@ -1,17 +1,21 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import PlusIcon from "@/assets/icons/plus.svg";
-import ActionModal from "@/components/shared/ActionModal";
 import ErrorModal from "@/components/shared/ErrorModal";
 import RouteHeading from "@/components/shared/RouteHeading";
 import { ModuleItem } from "@/components/training/Module";
 import Button from "@/components/ui/Button";
 import { Colors, TextStyles } from "@/constants/theme";
-import { useDeleteModule } from "@/hooks/useDeleteModule";
 import { useModules } from "@/hooks/useModules";
 import { Module } from "@/types/Modules";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { RefreshControl, SectionList, StyleSheet, Text, View } from "react-native";
+import {
+  RefreshControl,
+  SectionList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Circle } from "react-native-animated-spinkit";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -28,37 +32,37 @@ const ModuleEditor = () => {
     isRefetching,
     isLoading,
   } = useModules();
-  const { mutate: deleteModule, error: deleteError, reset: resetDelete } = useDeleteModule();
 
   const [dismissedError, setDismissedError] = useState<Error | null>(null);
-  const [moduleToDelete, setModuleToDelete] = useState<Module | null>(null);
-  const [isDeleteErrorVisible, setIsDeleteErrorVisible] = useState(false);
 
   const sections = useMemo(() => {
-    return (modules ?? []).reduce<ModuleSection[]>((acc, module) => {
-      const existing = acc.find((section) => section.title === module.group_name);
+    const grouped = (modules ?? []).reduce<ModuleSection[]>((acc, module) => {
+      const existing = acc.find(
+        (section) => section.title === module.group_name,
+      );
+
       if (existing) {
         existing.data.push(module);
       } else {
-        acc.push({ title: module.group_name, data: [module] });
+        acc.push({
+          title: module.group_name,
+          data: [module],
+        });
       }
+
       return acc;
     }, []);
+
+    return grouped
+      .map((section) => ({
+        ...section,
+        data: [...section.data].sort((a, b) => a.name.localeCompare(b.name)),
+      }))
+      .sort((a, b) => a.title.localeCompare(b.title));
   }, [modules]);
 
   const handleBackButton = () => {
     router.back();
-  };
-
-  const handleDelete = () => {
-    if (!moduleToDelete) return;
-    const moduleId = moduleToDelete.id;
-    setModuleToDelete(null);
-    deleteModule(moduleId, {
-      onError: () => {
-        setIsDeleteErrorVisible(true);
-      },
-    });
   };
 
   return (
@@ -68,23 +72,6 @@ const ModuleEditor = () => {
         visible={!!error && error !== dismissedError}
         onClose={() => setDismissedError(error)}
         subtitle="We're having some trouble loading this content. Please try again later."
-      />
-      <ErrorModal
-        visible={isDeleteErrorVisible}
-        errorCode={deleteError?.message ?? ""}
-        onClose={() => {
-          setIsDeleteErrorVisible(false);
-          resetDelete();
-        }}
-        subtitle="We couldn't delete this module. Please try again later."
-      />
-      <ActionModal
-        title="Delete Module?"
-        subtitle="Are you sure that you would like to delete this module? This cannot be undone."
-        visible={!!moduleToDelete}
-        actionLabel="Delete Module"
-        onAction={handleDelete}
-        onCancel={() => setModuleToDelete(null)}
       />
       <SectionList
         style={styles.sectionList}
@@ -101,10 +88,13 @@ const ModuleEditor = () => {
           />
         }
         renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.sectionHeader}>{title}</Text>
+          <Text style={[styles.sectionHeader, TextStyles.largeLabel]}>
+            {title}
+          </Text>
         )}
+        renderSectionFooter={() => <View style={styles.sectionFooter} />}
         stickySectionHeadersEnabled={false}
-        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         ListFooterComponent={() => <View style={{ height: 40 }} />}
         ListEmptyComponent={
           isLoading ? (
@@ -138,7 +128,6 @@ const ModuleEditor = () => {
           <ModuleItem
             module={item}
             onPress={() => router.push(`/training/module-editor/${item.id}`)}
-            onLongPress={() => setModuleToDelete(item)}
           />
         )}
       />
@@ -158,10 +147,11 @@ const makeStyles = (insets: EdgeInsets) =>
       paddingHorizontal: 20,
     },
     sectionHeader: {
-      fontFamily: TextStyles.largeLabel.fontFamily,
-      fontSize: TextStyles.largeLabel.fontSize,
-      color: TextStyles.largeLabel.color,
-      marginVertical: 15,
+      marginBottom: 16,
+      marginTop: 16,
+    },
+    sectionFooter: {
+      marginBottom: 10,
     },
     headerButtons: {
       flexDirection: "row",
