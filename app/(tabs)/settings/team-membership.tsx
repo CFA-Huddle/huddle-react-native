@@ -1,4 +1,5 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
+import PlusIcon from "@/assets/icons/plus.svg";
 import SearchIcon from "@/assets/icons/search.svg";
 import ProfileCardThin from "@/components/settings/ProfileCardThin";
 import ErrorModal from "@/components/shared/ErrorModal";
@@ -104,7 +105,13 @@ const TeamMembershipScreen = () => {
         />
       </View>
       <RouteHeading>Team Membership</RouteHeading>
-
+      <Button
+        text="Invite Team Member"
+        onPress={handleInviteUser}
+        style={styles.inviteButton}
+        variant="secondary"
+        iconLeft={PlusIcon}
+      />
       <SearchBar
         placeholder="Search all team members..."
         value={search}
