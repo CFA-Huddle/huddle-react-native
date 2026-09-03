@@ -33,8 +33,10 @@ const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 46,
-    overflow: "hidden",
+    width: 34,
+    height: 34,
+    alignItems: "center",
+    justifyContent: "center",
   },
   content: {
     paddingHorizontal: 20,

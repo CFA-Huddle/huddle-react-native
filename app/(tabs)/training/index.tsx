@@ -4,39 +4,64 @@ import PeopleIcon from "@/assets/icons/people.svg";
 import Heading from "@/components/shared/Heading";
 import { Colors, TextStyles } from "@/constants/theme";
 import { router } from "expo-router";
+import { useMemo, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+const GRID_GAP = 10;
+const MIN_TILE_SIZE = 160;
+const MAX_TILE_SIZE = 200;
+
+const ITEMS = [
+  { href: "/training/team-training", label: "Team Training", Icon: PeopleIcon },
+  { href: "/training/module-editor", label: "Module Editor", Icon: ModuleIcon },
+  { href: "/training/training-log", label: "Your Training Log", Icon: ChecklistIcon },
+] as const;
+
 const TrainingScreen = () => {
   const insets = useSafeAreaInsets();
+  const [gridWidth, setGridWidth] = useState(0);
+
+  const tileSize = useMemo(() => {
+    if (gridWidth <= 0) {
+      return MIN_TILE_SIZE;
+    }
+
+    const columns = Math.max(
+      1,
+      Math.min(
+        ITEMS.length,
+        Math.floor((gridWidth + GRID_GAP) / (MIN_TILE_SIZE + GRID_GAP)),
+      ),
+    );
+
+    return Math.min(
+      MAX_TILE_SIZE,
+      (gridWidth - GRID_GAP * (columns - 1)) / columns,
+    );
+  }, [gridWidth]);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Heading>Training</Heading>
-      <View style={styles.gridContainer}>
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.gridItem} onPress={() => router.push("/training/team-training")} activeOpacity={0.6}>
-            <PeopleIcon width={46} height={46} color={Colors.accent} />
-            <Text style={styles.gridItemText}>Team Training</Text>
+      <View
+        style={styles.gridContainer}
+        onLayout={(event) => {
+          const nextWidth = event.nativeEvent.layout.width;
+          setGridWidth((current) => (current === nextWidth ? current : nextWidth));
+        }}
+      >
+        {ITEMS.map(({ href, label, Icon }) => (
+          <TouchableOpacity
+            key={href}
+            style={[styles.gridItem, { width: tileSize }]}
+            onPress={() => router.push(href)}
+            activeOpacity={0.6}
+          >
+            <Icon width={46} height={46} color={Colors.accent} />
+            <Text style={styles.gridItemText}>{label}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.gridItem} onPress={() => router.push("/training/module-editor")} activeOpacity={0.6}>
-            <ModuleIcon width={46} height={46} color={Colors.accent} />
-            <Text style={styles.gridItemText}>Module Editor</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.gridItem} onPress={() => router.push("/training/training-log")} activeOpacity={0.6}>
-            <ChecklistIcon width={46} height={46} color={Colors.accent} />
-            <Text style={styles.gridItemText}>Your Training Log</Text>
-          </TouchableOpacity>
-          <View
-            style={styles.hiddenItem}
-            pointerEvents="none"
-            collapsable={false}
-            accessible={false}
-            importantForAccessibility="no"
-          />
-        </View>
+        ))}
       </View>
     </View>
   );
@@ -48,15 +73,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   gridContainer: {
-    flex: 1,
-    gap: 10,
-  },
-  row: {
     flexDirection: "row",
-    gap: 10,
+    flexWrap: "wrap",
+    gap: GRID_GAP,
   },
   gridItem: {
-    flex: 1,
     aspectRatio: 1,
     backgroundColor: Colors.card,
     borderRadius: 8,
@@ -67,10 +88,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 30,
     boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.05)",
-  },
-  hiddenItem: {
-    flex: 1,
-    margin: 15,
   },
   gridItemText: {
     fontSize: TextStyles.subTitle.fontSize,

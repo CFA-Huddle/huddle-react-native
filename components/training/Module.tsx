@@ -1,5 +1,5 @@
 import CheckmarkIcon from "@/assets/icons/checkmark.svg";
-import PathwayIcon from "@/components/training/PathwayIcon";
+import ModuleIcon from "@/components/training/ModuleIcon";
 import { Colors, TextStyles } from "@/constants/theme";
 import { Module } from "@/types/Modules";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -9,18 +9,19 @@ import Svg, { Circle, G } from "react-native-svg";
 const PROGRESS_SIZE = 28;
 const PROGRESS_STROKE_WIDTH = 3.5;
 
-export const ModuleItem = ({ module, progress, onPress }: { module: Module, progress?: number, onPress?: () => void }) => {
+export const ModuleItem = ({ module, progress, onPress, onLongPress }: { module: Module, progress?: number, onPress?: () => void, onLongPress?: () => void }) => {
   const styles = makeStyles(useSafeAreaInsets());
 
   return (
     <TouchableOpacity
       style={styles.moduleItem}
       onPress={onPress}
-      disabled={!onPress}
+      onLongPress={onLongPress}
+      disabled={!onPress && !onLongPress}
       activeOpacity={0.6}
     >
-      <PathwayIcon icon={module.icon} size={40} />
-      <Text style={styles.moduleTitle} numberOfLines={1}>{module.title}</Text>
+      <ModuleIcon icon={module.icon} size={40} />
+      <Text style={styles.moduleTitle} numberOfLines={1}>{module.name}</Text>
       {progress != null && (
         <View style={styles.progressRow}>
           <Text style={styles.progressLabel}>{Math.round(progress)}%</Text>

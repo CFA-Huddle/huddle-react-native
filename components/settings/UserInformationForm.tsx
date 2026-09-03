@@ -1,7 +1,6 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import Avatar from "@/components/shared/Avatar";
 import ErrorModal from "@/components/shared/ErrorModal";
-import RouteHeading from "@/components/shared/RouteHeading";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Spinner from "@/components/ui/Spinner";
@@ -22,7 +21,8 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useLocationContext } from "@/context/LocationContext";
 import { useShake } from "@/hooks/useShake";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Keyboard, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import RolesModal from "./RolesModal";
 
@@ -54,6 +54,7 @@ const UserInformationForm = ({ user }: UserInformationFormProps) => {
         control,
         handleSubmit,
         setError: setFieldError,
+        clearErrors,
         setValue,
         formState: { errors, isDirty },
     } = useForm<UserInformationFormValues>({
@@ -143,84 +144,95 @@ const UserInformationForm = ({ user }: UserInformationFormProps) => {
     };
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView contentContainerStyle={styles.container}>
-                <Spinner isVisible={isPending || loading} />
-                <ErrorModal
-                    errorCode={error}
-                    visible={!!error}
-                    onClose={() => setError("")}
+        <>
+            <Spinner isVisible={isPending || loading} />
+            <ErrorModal
+                errorCode={error}
+                visible={!!error}
+                onClose={() => setError("")}
+            />
+            <RolesModal
+                ref={roleBottomSheetRef as React.RefObject<BottomSheetModal>}
+                selectedRole={selectedRole}
+                onSelectRole={setSelectedRole}
+                onSave={saveRole}
+            />
+
+            <KeyboardAwareScrollView
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={[styles.container, { paddingTop: insets.top }]}
+            >
+                <Button
+                    text="Back"
+                    onPress={handleBackButton}
+                    style={styles.backButton}
+                    contentStyle={styles.backButtonContent}
+                    variant="transparent"
+                    iconLeft={ChevronLeftIcon}
                 />
-                <RolesModal
-                    ref={roleBottomSheetRef as React.RefObject<BottomSheetModal>}
-                    selectedRole={selectedRole}
-                    onSelectRole={setSelectedRole}
-                    onSave={saveRole}
+                <Text style={styles.title}>Account Information</Text>
+
+                <Controller
+                    control={control}
+                    name="firstName"
+                    rules={{ required: "First name is required" }}
+                    render={({ field: { onChange, value } }) => (
+                        <TextField
+                            label="First Name"
+                            style={styles.textFieldContainer}
+                            value={value}
+                            onChangeText={(text) => {
+                                onChange(text);
+                                clearErrors("firstName");
+                            }}
+                            error={errors.firstName?.message}
+                        />
+                    )}
                 />
-                <View style={{ paddingTop: insets.top }}>
-                    <Button
-                        text="Back"
-                        onPress={handleBackButton}
-                        style={styles.backButton}
-                        contentStyle={styles.backButtonContent}
-                        variant="transparent"
-                        iconLeft={ChevronLeftIcon}
-                    />
-                    <RouteHeading>Account Information</RouteHeading>
-                    <Text style={[TextStyles.largeLabel, styles.label]}>First Name</Text>
-                    <Controller
-                        control={control}
-                        name="firstName"
-                        rules={{ required: "First name is required" }}
-                        render={({ field: { onChange, value } }) => (
-                            <>
-                                <TextField
-                                    style={styles.textFieldContainer}
-                                    value={value}
-                                    onChangeText={(text) => onChange(text)}
-                                    error={errors.firstName?.message}
-                                />
-                            </>
-                        )}
-                    />
-                    <Text style={[TextStyles.largeLabel, styles.label]}>Last Name</Text>
-                    <Controller
-                        control={control}
-                        name="lastName"
-                        rules={{ required: "Last name is required" }}
-                        render={({ field: { onChange, value } }) => (
-                            <>
-                                <TextField
-                                    style={styles.textFieldContainer}
-                                    value={value}
-                                    onChangeText={(text) => onChange(text)}
-                                    error={errors.lastName?.message}
-                                />
-                            </>
-                        )}
-                    />
-                    <Text style={[TextStyles.largeLabel, styles.label]}>Email</Text>
-                    <Controller
-                        control={control}
-                        name="email"
-                        rules={{ required: "Email is required", validate: (v) => isValidEmail(v) || "Please enter a valid email address" }}
-                        render={({ field: { onChange, value } }) => (
-                            <>
-                                <TextField
-                                    style={styles.textFieldContainer}
-                                    value={value}
-                                    onChangeText={(text) => onChange(text)}
-                                    error={errors.email?.message}
-                                    keyboardType="email-address"
-                                    autoCapitalize="none"
-                                    autoCorrect={false}
-                                    autoComplete="email"
-                                    textContentType="emailAddress"
-                                />
-                            </>
-                        )}
-                    />
-                    <Text style={[TextStyles.largeLabel, styles.label]}>Profile Picture</Text>
+
+                <Controller
+                    control={control}
+                    name="lastName"
+                    rules={{ required: "Last name is required" }}
+                    render={({ field: { onChange, value } }) => (
+                        <TextField
+                            label="Last Name"
+                            style={styles.textFieldContainer}
+                            value={value}
+                            onChangeText={(text) => {
+                                onChange(text);
+                                clearErrors("lastName");
+                            }}
+                            error={errors.lastName?.message}
+                        />
+                    )}
+                />
+
+                <Controller
+                    control={control}
+                    name="email"
+                    rules={{ required: "Email is required", validate: (v) => isValidEmail(v) || "Please enter a valid email address" }}
+                    render={({ field: { onChange, value } }) => (
+                        <TextField
+                            label="Email"
+                            style={styles.textFieldContainer}
+                            value={value}
+                            onChangeText={(text) => {
+                                onChange(text);
+                                clearErrors("email");
+                            }}
+                            error={errors.email?.message}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            autoComplete="email"
+                            textContentType="emailAddress"
+                        />
+                    )}
+                />
+
+                <View style={styles.roleFieldContainer}>
+                    <Text style={styles.fieldLabel}>Profile Picture</Text>
                     <Card style={styles.emailCard}>
                         <Text style={styles.textField}>Change profile picture</Text>
                         {profilePicturePreview && (
@@ -233,77 +245,51 @@ const UserInformationForm = ({ user }: UserInformationFormProps) => {
                             variant="outlined"
                         />
                     </Card>
-                    {!isOwner && (
-                        <>
-                            <Text style={[TextStyles.largeLabel, styles.label]}>Role</Text>
-                            <Controller
-                                control={control}
-                                name="role"
-                                render={() => (
-                                    <View style={styles.roleFieldContainer}>
-                                        <Animated.View
-                                            style={[
-                                                roleError ? styles.roleCardError : null,
-                                                animatedStyle,
-                                            ]}
-                                        >
-                                            <Card style={styles.emailCard}>
-                                                <Text style={styles.textField}>{RoleLabels[selectedRole]}</Text>
-                                                <Button
-                                                    text="Set role"
-                                                    onPress={handleSetRole}
-                                                    style={styles.changeButton}
-                                                    variant="outlined"
-                                                />
-                                            </Card>
-                                        </Animated.View>
-                                        {roleError && <Text style={styles.errorText}>{roleError}</Text>}
-                                    </View>
-                                )}
-                            />
-                        </>
-                    )}
                 </View>
+
+                {!isOwner && (
+                    <Controller
+                        control={control}
+                        name="role"
+                        render={() => (
+                            <View style={styles.roleFieldContainer}>
+                                <Text style={styles.fieldLabel}>Role</Text>
+                                <Animated.View
+                                    style={[
+                                        roleError ? styles.roleCardError : null,
+                                        animatedStyle,
+                                    ]}
+                                >
+                                    <Card style={styles.emailCard}>
+                                        <Text style={styles.textField}>{RoleLabels[selectedRole]}</Text>
+                                        <Button
+                                            text="Set role"
+                                            onPress={handleSetRole}
+                                            style={styles.changeButton}
+                                            variant="outlined"
+                                        />
+                                    </Card>
+                                </Animated.View>
+                                {roleError && <Text style={styles.errorText}>{roleError}</Text>}
+                            </View>
+                        )}
+                    />
+                )}
+
                 <Button
-                    variant="primary"
                     text="Update Profile"
                     onPress={handleSubmit(onSubmit)}
-                    style={styles.updateProfileButton}
                     disabled={!isDirty}
                 />
-            </ScrollView>
-        </TouchableWithoutFeedback>
+            </KeyboardAwareScrollView>
+        </>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        paddingHorizontal: 20,
-        paddingBottom: 20,
-        flexGrow: 1,
-        flexDirection: "column",
-        justifyContent: "space-between",
-    },
-    updateProfileButton: {
-        marginVertical: 20,
-    },
-    textFieldContainer: {
-        padding: 16,
-    },
-    emailText: {
-        maxWidth: "70%",
-    },
-    footer: {
         padding: 20,
-        flexDirection: "row",
-    },
-    buttonText: {
-        fontFamily: TextStyles.body.fontFamily,
-        fontSize: TextStyles.body.fontSize,
-        color: TextStyles.body.color,
-    },
-    changeButton: {
-        alignSelf: "flex-end",
+        gap: 12,
     },
     backButton: {
         marginTop: 30,
@@ -313,8 +299,23 @@ const styles = StyleSheet.create({
     backButtonContent: {
         paddingLeft: 0,
     },
-    label: {
-        marginBottom: 6,
+    title: {
+        fontFamily: Apercu.bold,
+        fontSize: 20,
+        color: Colors.textPrimary,
+        marginBottom: 10,
+    },
+    textFieldContainer: {
+        padding: 16,
+    },
+    fieldLabel: {
+        fontSize: 16,
+        fontFamily: Apercu.regular,
+        color: Colors.textSecondary,
+        marginBottom: 4,
+    },
+    changeButton: {
+        alignSelf: "flex-end",
     },
     textField: {
         fontFamily: TextStyles.body.fontFamily,
@@ -326,7 +327,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 16,
     },
     roleFieldContainer: {
         marginBottom: 16,

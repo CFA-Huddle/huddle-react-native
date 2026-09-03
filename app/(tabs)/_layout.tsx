@@ -6,8 +6,9 @@ import HomeIcon from "@/assets/icons/home.svg";
 import LetterIcon from "@/assets/icons/letter.svg";
 import UserIcon from "@/assets/icons/user.svg";
 import { Apercu, Colors } from "@/constants/theme";
-
+import { DeviceType, deviceType } from "expo-device";
 export default function TabLayout() {
+  const isDesktop = deviceType === DeviceType.DESKTOP;
   return (
     <Tabs
       screenOptions={{
@@ -19,6 +20,12 @@ export default function TabLayout() {
         tabBarLabelStyle: {
           fontFamily: Apercu.medium,
           fontSize: 11,
+        },
+        tabBarActiveBackgroundColor: isDesktop ? Colors.background : undefined,
+        tabBarPosition: isDesktop ? "left" : "bottom",
+        tabBarLabelPosition: isDesktop ? "beside-icon" : "below-icon",
+        tabBarStyle: {
+          borderRightWidth: 0,
         },
         headerShown: false
       }}

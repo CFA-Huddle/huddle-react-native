@@ -5,6 +5,7 @@ import {
     StyleProp,
     StyleSheet,
     Text,
+    TextStyle,
     TouchableOpacity,
     View,
     ViewStyle,
@@ -70,6 +71,7 @@ interface ButtonProps {
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 const GradientWrapper: React.FC<{
@@ -96,6 +98,7 @@ const Button: React.FC<ButtonProps> = ({
   onPress,
   style,
   contentStyle,
+  textStyle,
 }) => {
   const {
     contentColor,
@@ -119,7 +122,7 @@ const Button: React.FC<ButtonProps> = ({
     >
       <ContentWrapper style={[styles.content, contentStyle]}>
         {IconLeft && <IconLeft color={contentColor} width={iconSize} height={iconSize} />}
-        <Text style={[styles.text, { color: contentColor }]}>{text}</Text>
+        <Text style={[styles.text, { color: contentColor }, textStyle]}>{text}</Text>
         {IconRight && <IconRight color={contentColor} width={iconSize} height={iconSize} />}
       </ContentWrapper>
     </TouchableOpacity>

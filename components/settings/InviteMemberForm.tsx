@@ -1,7 +1,6 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import Avatar from "@/components/shared/Avatar";
 import ErrorModal from "@/components/shared/ErrorModal";
-import RouteHeading from "@/components/shared/RouteHeading";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Spinner from "@/components/ui/Spinner";
@@ -18,8 +17,8 @@ import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import RolesModal from "./RolesModal";
@@ -36,7 +35,7 @@ const InviteMemberForm = () => {
     const {
         control,
         handleSubmit,
-        setError: setFieldError,
+        clearErrors,
         getValues,
         setValue,
         formState: { errors, isValid },
@@ -58,6 +57,7 @@ const InviteMemberForm = () => {
     };
 
     const onSubmit = (data: InviteUserRequest) => {
+        Keyboard.dismiss();
         inviteUser(data, {
             onSuccess: () => {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -79,161 +79,144 @@ const InviteMemberForm = () => {
     };
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView contentContainerStyle={styles.container}>
-                <Spinner isVisible={isPending || loading} />
-                <ErrorModal
-                    errorCode={error}
-                    visible={!!error}
-                    onClose={() => setError("")}
-                />
-                <RolesModal
-                    ref={roleBottomSheetRef as React.RefObject<BottomSheetModal>}
-                    selectedRole={selectedRole}
-                    onSelectRole={setSelectedRole}
-                    onSave={saveRole}
-                />
-                <View style={{ paddingTop: insets.top }}>
-                    <Button
-                        text="Back"
-                        onPress={handleBackButton}
-                        style={styles.backButton}
-                        contentStyle={styles.backButtonContent}
-                        variant="transparent"
-                        iconLeft={ChevronLeftIcon}
-                    />
-                    <RouteHeading>Invite Team Member</RouteHeading>
-                    <Text style={[TextStyles.largeLabel, styles.label]}>First Name</Text>
-                    <Controller
-                        control={control}
-                        name="first_name"
-                        rules={{ required: "First name is required" }}
-                        render={({ field: { onChange, value } }) => (
-                            <>
-                                <TextField
-                                    style={styles.textFieldContainer}
-                                    placeholder="Enter the first name"
-                                    value={value}
-                                    onChangeText={(text) => onChange(text)}
-                                    error={errors.first_name?.message}
-                                />
-                            </>
-                        )}
-                    />
-                    <Text style={[TextStyles.largeLabel, styles.label]}>Last Name</Text>
-                    <Controller
-                        control={control}
-                        name="last_name"
-                        rules={{ required: "Last name is required" }}
-                        render={({ field: { onChange, value } }) => (
-                            <>
-                                <TextField
-                                    style={styles.textFieldContainer}   
-                                    placeholder="Enter the last name"
-                                    value={value}
-                                    onChangeText={(text) => onChange(text)}
-                                    error={errors.last_name?.message}
-                                />
-                            </>
-                        )}
-                    />
-                    <Text style={[TextStyles.largeLabel, styles.label]}>Email</Text>
-                    <Controller
-                        control={control}
-                        name="email"
-                        rules={{ required: "Email is required", validate: (v) => isValidEmail(v) || "Please enter a valid email address" }}
-                        render={({ field: { onChange, value } }) => (
-                            <>
-                                <TextField
-                                    style={styles.textFieldContainer}
-                                    placeholder="Enter the email address"
-                                    value={value}
-                                    onChangeText={(text) => onChange(text)}
-                                    error={errors.email?.message}
-                                    keyboardType="email-address"
-                                    autoCapitalize="none"
-                                    autoCorrect={false}
-                                    autoComplete="email"
-                                    textContentType="emailAddress"
-                                />
-                            </>
-                        )}
-                    />
-                    <Text style={[TextStyles.largeLabel, styles.label]}>Role</Text>
-                    <Controller
-                        control={control}
-                        name="memberships"
-                        rules={{
-                            validate: (value) =>
-                                (Array.isArray(value) && value.length > 0) || "Role is required",
-                        }}
-                        render={() => (
-                            <View style={styles.roleFieldContainer}>
-                                <Animated.View
-                                    style={[
-                                        roleError ? styles.roleCardError : null,
-                                        animatedStyle,
-                                    ]}
-                                >
-                                    <Card style={styles.emailCard}>
-                                        <Text style={styles.textField}>{getValues("memberships").length > 0 ? RoleLabels[selectedRole] : "Set membership role"}</Text>
-                                        {profilePicturePreview && (
-                                            <Avatar avatarUrl={{ uri: profilePicturePreview }} />
-                                        )}
-                                        <Button
-                                            text="Set role"
-                                            onPress={handleSetRole}
-                                            style={styles.changeButton}
-                                            variant="outlined"
-                                        />
-                                    </Card>
-                                </Animated.View>
-                                {roleError && <Text style={styles.errorText}>{roleError}</Text>}
-                            </View>
-                        )}
-                    />
-                </View>
+        <>
+            <Spinner isVisible={isPending || loading} />
+            <ErrorModal
+                errorCode={error}
+                visible={!!error}
+                onClose={() => setError("")}
+            />
+            <RolesModal
+                ref={roleBottomSheetRef as React.RefObject<BottomSheetModal>}
+                selectedRole={selectedRole}
+                onSelectRole={setSelectedRole}
+                onSave={saveRole}
+            />
+
+            <KeyboardAwareScrollView
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={[styles.container, { paddingTop: insets.top }]}
+            >
                 <Button
-                    variant="primary"
+                    text="Back"
+                    onPress={handleBackButton}
+                    style={styles.backButton}
+                    contentStyle={styles.backButtonContent}
+                    variant="transparent"
+                    iconLeft={ChevronLeftIcon}
+                />
+                <Text style={styles.title}>Invite Team Member</Text>
+
+                <Controller
+                    control={control}
+                    name="first_name"
+                    rules={{ required: "First name is required" }}
+                    render={({ field: { onChange, value } }) => (
+                        <TextField
+                            label="First Name"
+                            style={styles.textFieldContainer}
+                            placeholder="Enter the first name"
+                            value={value}
+                            onChangeText={(text) => {
+                                onChange(text);
+                                clearErrors("first_name");
+                            }}
+                            error={errors.first_name?.message}
+                        />
+                    )}
+                />
+
+                <Controller
+                    control={control}
+                    name="last_name"
+                    rules={{ required: "Last name is required" }}
+                    render={({ field: { onChange, value } }) => (
+                        <TextField
+                            label="Last Name"
+                            style={styles.textFieldContainer}
+                            placeholder="Enter the last name"
+                            value={value}
+                            onChangeText={(text) => {
+                                onChange(text);
+                                clearErrors("last_name");
+                            }}
+                            error={errors.last_name?.message}
+                        />
+                    )}
+                />
+
+                <Controller
+                    control={control}
+                    name="email"
+                    rules={{ required: "Email is required", validate: (v) => isValidEmail(v) || "Please enter a valid email address" }}
+                    render={({ field: { onChange, value } }) => (
+                        <TextField
+                            label="Email"
+                            style={styles.textFieldContainer}
+                            placeholder="Enter the email address"
+                            value={value}
+                            onChangeText={(text) => {
+                                onChange(text);
+                                clearErrors("email");
+                            }}
+                            error={errors.email?.message}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            autoComplete="email"
+                            textContentType="emailAddress"
+                        />
+                    )}
+                />
+
+                <Controller
+                    control={control}
+                    name="memberships"
+                    rules={{
+                        validate: (value) =>
+                            (Array.isArray(value) && value.length > 0) || "Role is required",
+                    }}
+                    render={() => (
+                        <View style={styles.roleFieldContainer}>
+                            <Text style={styles.fieldLabel}>Role</Text>
+                            <Animated.View
+                                style={[
+                                    roleError ? styles.roleCardError : null,
+                                    animatedStyle,
+                                ]}
+                            >
+                                <Card style={styles.emailCard}>
+                                    <Text style={styles.textField}>{getValues("memberships").length > 0 ? RoleLabels[selectedRole] : "Set membership role"}</Text>
+                                    {profilePicturePreview && (
+                                        <Avatar avatarUrl={{ uri: profilePicturePreview }} />
+                                    )}
+                                    <Button
+                                        text="Set role"
+                                        onPress={handleSetRole}
+                                        style={styles.changeButton}
+                                        variant="outlined"
+                                    />
+                                </Card>
+                            </Animated.View>
+                            {roleError && <Text style={styles.errorText}>{roleError}</Text>}
+                        </View>
+                    )}
+                />
+
+                <Button
                     text="Send Invitation"
                     onPress={handleSubmit(onSubmit)}
-                    style={styles.updateProfileButton}
                     disabled={!isValid}
                 />
-            </ScrollView>
-        </TouchableWithoutFeedback>
+            </KeyboardAwareScrollView>
+        </>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        paddingHorizontal: 20,
-        paddingBottom: 20,
-        flexGrow: 1,
-        justifyContent: "space-between",
-        flexDirection: "column",
-    },
-    updateProfileButton: {
-        marginTop: 20,
-        marginBottom: 20,
-    },
-    textFieldContainer: {
-        padding: 16,
-    },
-    emailText: {
-        maxWidth: "70%",
-    },
-    footer: {
         padding: 20,
-        flexDirection: "row",
-    },
-    buttonText: {
-        fontFamily: TextStyles.body.fontFamily,
-        fontSize: TextStyles.body.fontSize,
-        color: TextStyles.body.color,
-    },
-    changeButton: {
-        alignSelf: "flex-end",
+        gap: 12,
     },
     backButton: {
         marginTop: 30,
@@ -243,8 +226,23 @@ const styles = StyleSheet.create({
     backButtonContent: {
         paddingLeft: 0,
     },
-    label: {
-        marginBottom: 6,
+    title: {
+        fontFamily: Apercu.bold,
+        fontSize: 20,
+        color: Colors.textPrimary,
+        marginBottom: 10,
+    },
+    textFieldContainer: {
+        padding: 16,
+    },
+    fieldLabel: {
+        fontSize: 16,
+        fontFamily: Apercu.regular,
+        color: Colors.textSecondary,
+        marginBottom: 4,
+    },
+    changeButton: {
+        alignSelf: "flex-end",
     },
     textField: {
         fontFamily: TextStyles.body.fontFamily,

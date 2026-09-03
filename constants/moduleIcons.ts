@@ -12,25 +12,6 @@ import Bowl from "@/assets/icons/pathway/Bowl.svg";
 import Breading from "@/assets/icons/pathway/Breading.svg";
 import BreadingRight from "@/assets/icons/pathway/BreadingRight.svg";
 import BreadingTable from "@/assets/icons/pathway/BreadingTable.svg";
-import C_BeyondRestaurant from "@/assets/icons/pathway/C_BeyondRestaurant.svg";
-import C_Boards from "@/assets/icons/pathway/C_Boards.svg";
-import C_ColdPrep from "@/assets/icons/pathway/C_ColdPrep.svg";
-import C_Computer from "@/assets/icons/pathway/C_Computer.svg";
-import C_DriveThru from "@/assets/icons/pathway/C_DriveThru.svg";
-import C_EmergencyResponseProcedures from "@/assets/icons/pathway/C_EmergencyResponseProcedures.svg";
-import C_Facilities from "@/assets/icons/pathway/C_Facilities.svg";
-import C_Flag from "@/assets/icons/pathway/C_Flag.svg";
-import C_Foundations from "@/assets/icons/pathway/C_Foundations.svg";
-import C_FrontCounter from "@/assets/icons/pathway/C_FrontCounter.svg";
-import C_Marketing from "@/assets/icons/pathway/C_Marketing.svg";
-import C_MobileOrdering from "@/assets/icons/pathway/C_MobileOrdering.svg";
-import C_OperationalRequirementsGuide from "@/assets/icons/pathway/C_OperationalRequirementsGuide.svg";
-import C_RawChicken from "@/assets/icons/pathway/C_RawChicken.svg";
-import C_SeasonalFall from "@/assets/icons/pathway/C_SeasonalFall.svg";
-import C_SeasonalSummer from "@/assets/icons/pathway/C_SeasonalSummer.svg";
-import C_TreatsBeverages from "@/assets/icons/pathway/C_TreatsBeverages.svg";
-import C_WHED from "@/assets/icons/pathway/C_WHED.svg";
-import C_WhyNotYourBest from "@/assets/icons/pathway/C_WhyNotYourBest.svg";
 import Catering from "@/assets/icons/pathway/Catering.svg";
 import Cheese from "@/assets/icons/pathway/Cheese.svg";
 import ChickenNoodle from "@/assets/icons/pathway/ChickenNoodle.svg";
@@ -65,7 +46,6 @@ import Filet from "@/assets/icons/pathway/Filet.svg";
 import FiletRoller from "@/assets/icons/pathway/FiletRoller.svg";
 import Flag from "@/assets/icons/pathway/Flag.svg";
 import FoodSafety from "@/assets/icons/pathway/FoodSafety.svg";
-import Foundations from "@/assets/icons/pathway/Foundations.svg";
 import FrontCounter from "@/assets/icons/pathway/FrontCounter.svg";
 import FrostedBeverage from "@/assets/icons/pathway/FrostedBeverage.svg";
 import Garbage from "@/assets/icons/pathway/Garbage.svg";
@@ -163,199 +143,194 @@ import WarmerRectangle from "@/assets/icons/pathway/WarmerRectangle.svg";
 import WarmingDrawer from "@/assets/icons/pathway/WarmingDrawer.svg";
 import WHED from "@/assets/icons/pathway/WHED.svg";
 import WhyNotYourBest from "@/assets/icons/pathway/WhyNotYourBest.svg";
+import {
+  TrainingModuleIcon,
+  TrainingModuleIconLabels,
+} from "@/types/TrainingModuleIcon";
 import type { FC } from "react";
 import type { SvgProps } from "react-native-svg";
 
-export type PathwayIconComponent = FC<SvgProps>;
+export { TrainingModuleIcon, TrainingModuleIconLabels };
 
-export type PathwayIconCategory = {
+export type ModuleIconComponent = FC<SvgProps>;
+
+export type ModuleIconCategory = {
   id: string;
   name: string;
-  icons: string[];
+  icons: TrainingModuleIcon[];
 };
 
-export const PATHWAY_ICON_COMPONENTS: Record<string, PathwayIconComponent> = {
-  "ADP.svg": ADP,
-  "BackstageTour.svg": BackstageTour,
-  "Bacon.svg": Bacon,
-  "Bagging.svg": Bagging,
-  "Beverage.svg": Beverage,
-  "BeverageClearCup.svg": BeverageClearCup,
-  "BeyondRestaurant.svg": BeyondRestaurant,
-  "Boards.svg": Boards,
-  "BoiledEggs.svg": BoiledEggs,
-  "BottledSauce.svg": BottledSauce,
-  "Bowl.svg": Bowl,
-  "Breading.svg": Breading,
-  "BreadingRight.svg": BreadingRight,
-  "BreadingTable.svg": BreadingTable,
-  "C_BeyondRestaurant.svg": C_BeyondRestaurant,
-  "C_Boards.svg": C_Boards,
-  "C_ColdPrep.svg": C_ColdPrep,
-  "C_Computer.svg": C_Computer,
-  "C_DriveThru.svg": C_DriveThru,
-  "C_EmergencyResponseProcedures.svg": C_EmergencyResponseProcedures,
-  "C_Facilities.svg": C_Facilities,
-  "C_Flag.svg": C_Flag,
-  "C_Foundations.svg": C_Foundations,
-  "C_FrontCounter.svg": C_FrontCounter,
-  "C_Marketing.svg": C_Marketing,
-  "C_MobileOrdering.svg": C_MobileOrdering,
-  "C_OperationalRequirementsGuide.svg": C_OperationalRequirementsGuide,
-  "C_RawChicken.svg": C_RawChicken,
-  "C_SeasonalFall.svg": C_SeasonalFall,
-  "C_SeasonalSummer.svg": C_SeasonalSummer,
-  "C_TreatsBeverages.svg": C_TreatsBeverages,
-  "C_WHED.svg": C_WHED,
-  "C_WhyNotYourBest.svg": C_WhyNotYourBest,
-  "Catering.svg": Catering,
-  "Cheese.svg": Cheese,
-  "ChickenNoodle.svg": ChickenNoodle,
-  "ChickenSandwich.svg": ChickenSandwich,
-  "ChickenTransfer.svg": ChickenTransfer,
-  "Chickfila.svg": Chickfila,
-  "ChilledGrilled.svg": ChilledGrilled,
-  "Chopping_Romaine_Lettuce.svg": Chopping_Romaine_Lettuce,
-  "Cleaning.svg": Cleaning,
-  "CleaningFloors.svg": CleaningFloors,
-  "CleaningLights.svg": CleaningLights,
-  "CleaningSurfaces.svg": CleaningSurfaces,
-  "CoffeeBrewer.svg": CoffeeBrewer,
-  "ColdPrep.svg": ColdPrep,
-  "CompliantPackaging3b.svg": CompliantPackaging3b,
-  "Computer.svg": Computer,
-  "Cookie.svg": Cookie,
-  "Corn.svg": Corn,
-  "Cow.svg": Cow,
-  "CuttingBoards.svg": CuttingBoards,
-  "DiningRoom.svg": DiningRoom,
-  "DishesHand.svg": DishesHand,
-  "Dishwasher.svg": Dishwasher,
-  "DOC.svg": DOC,
-  "Document.svg": Document,
-  "DrinkTower.svg": DrinkTower,
-  "DriveThru.svg": DriveThru,
-  "EmergencyResponseProcedures.svg": EmergencyResponseProcedures,
-  "FaceToFace.svg": FaceToFace,
-  "Facilities.svg": Facilities,
-  "Filet.svg": Filet,
-  "FiletRoller.svg": FiletRoller,
-  "Flag.svg": Flag,
-  "FoodSafety.svg": FoodSafety,
-  "Foundations.svg": Foundations,
-  "FrontCounter.svg": FrontCounter,
-  "FrostedBeverage.svg": FrostedBeverage,
-  "Garbage.svg": Garbage,
-  "GHSHazard.svg": GHSHazard,
-  "GreenLeaf.svg": GreenLeaf,
-  "GrilledChickenFiletSample.svg": GrilledChickenFiletSample,
-  "GrilledFilet.svg": GrilledFilet,
-  "GrilledNuggets.svg": GrilledNuggets,
-  "GrillGarland.svg": GrillGarland,
-  "Handling_Raw_Proteins_Safely.svg": Handling_Raw_Proteins_Safely,
-  "Handwashing.svg": Handwashing,
-  "HoldingRequirements.svg": HoldingRequirements,
-  "Hospitality.svg": Hospitality,
-  "IceBathBreading.svg": IceBathBreading,
-  "IcedCoffee.svg": IcedCoffee,
-  "IceDream.svg": IceDream,
-  "IcedreamMachine.svg": IcedreamMachine,
-  "IceMachine.svg": IceMachine,
-  "KidsMeal.svg": KidsMeal,
-  "LeanProcess.svg": LeanProcess,
-  "LemonadeDispenser.svg": LemonadeDispenser,
-  "Lemons.svg": Lemons,
-  "LettuceCabbage.svg": LettuceCabbage,
-  "LettuceWrapSandwich.svg": LettuceWrapSandwich,
-  "MacAndCheeseSample.svg": MacAndCheeseSample,
-  "MacNCheese.svg": MacNCheese,
-  "Marketing.svg": Marketing,
-  "Meal.svg": Meal,
-  "Measuring.svg": Measuring,
-  "MercoHolding.svg": MercoHolding,
-  "Milkshake.svg": Milkshake,
-  "MilkshakeBaseDispenser.svg": MilkshakeBaseDispenser,
-  "MilkshakePeach.svg": MilkshakePeach,
-  "MilkWash.svg": MilkWash,
-  "MixerShredder.svg": MixerShredder,
-  "MobileOrdering.svg": MobileOrdering,
-  "Nuggets.svg": Nuggets,
-  "OperationalRequirementsGuide.svg": OperationalRequirementsGuide,
-  "Oven.svg": Oven,
-  "PackagingAndTransportingProduce.svg": PackagingAndTransportingProduce,
-  "PassThru.svg": PassThru,
-  "Pathway.svg": Pathway,
-  "Payment.svg": Payment,
-  "PhysicalSafety.svg": PhysicalSafety,
-  "PineappleDragonfruitClearCup.svg": PineappleDragonfruitClearCup,
-  "PITCO_Reduced_Size.svg": PITCO_Reduced_Size,
-  "PotatoFryer.svg": PotatoFryer,
-  "PressureFryer.svg": PressureFryer,
-  "Pretzel Cheddar Club.svg": Pretzel_Cheddar_Club,
-  "PrinceCastle.svg": PrinceCastle,
-  "Produce.svg": Produce,
-  "QualityPhotos.svg": QualityPhotos,
-  "Randell.svg": Randell,
-  "RawChicken.svg": RawChicken,
-  "RawGrilledFilet.svg": RawGrilledFilet,
-  "RawGrilledNuggets.svg": RawGrilledNuggets,
-  "RecentlyUpdated.svg": RecentlyUpdated,
-  "Refrigerator.svg": Refrigerator,
-  "RestaurantExterior.svg": RestaurantExterior,
-  "Restrooms.svg": Restrooms,
-  "Romaine.svg": Romaine,
-  "SaberSlicer.svg": SaberSlicer,
-  "SaladPrepTable.svg": SaladPrepTable,
-  "Salads.svg": Salads,
-  "SamplesDrinks.svg": SamplesDrinks,
-  "SamplesFood.svg": SamplesFood,
-  "SeasonalFall.svg": SeasonalFall,
-  "SeasonalSummer.svg": SeasonalSummer,
-  "Security.svg": Security,
-  "Signal.svg": Signal,
-  "SinkCompartment.svg": SinkCompartment,
-  "Sinks.svg": Sinks,
-  "Storage.svg": Storage,
-  "StrawberryHibiscus.svg": StrawberryHibiscus,
-  "Strips.svg": Strips,
-  "TeaBrewer.svg": TeaBrewer,
-  "TeamMemberTalkingPoints.svg": TeamMemberTalkingPoints,
-  "TeaUrn.svg": TeaUrn,
-  "ThirdParty.svg": ThirdParty,
-  "TimeTemp.svg": TimeTemp,
-  "TMS.svg": TMS,
-  "ToasterRoundup.svg": ToasterRoundup,
-  "Toasting_Buns.svg": Toasting_Buns,
-  "Tomatoes.svg": Tomatoes,
-  "Towels.svg": Towels,
-  "TreatsBeverages.svg": TreatsBeverages,
-  "Uniform.svg": Uniform,
-  "Upstream.svg": Upstream,
-  "VentHood.svg": VentHood,
-  "VideoSearchResult.svg": VideoSearchResult,
-  "WaffleFries.svg": WaffleFries,
-  "WarmerChicken.svg": WarmerChicken,
-  "WarmerRectangle.svg": WarmerRectangle,
-  "WarmingDrawer.svg": WarmingDrawer,
-  "WHED.svg": WHED,
-  "WhyNotYourBest.svg": WhyNotYourBest,
+export const MODULE_ICON_COMPONENTS: Record<
+  TrainingModuleIcon,
+  ModuleIconComponent
+> = {
+  [TrainingModuleIcon.CFA_ICON_ADP]: ADP,
+  [TrainingModuleIcon.CFA_ICON_BACKSTAGE_TOUR]: BackstageTour,
+  [TrainingModuleIcon.CFA_ICON_BACON]: Bacon,
+  [TrainingModuleIcon.CFA_ICON_BAGGING]: Bagging,
+  [TrainingModuleIcon.CFA_ICON_BEVERAGE]: Beverage,
+  [TrainingModuleIcon.CFA_ICON_BEVERAGE_CLEAR_CUP]: BeverageClearCup,
+  [TrainingModuleIcon.CFA_ICON_BEYOND_RESTAURANT]: BeyondRestaurant,
+  [TrainingModuleIcon.CFA_ICON_BOARDS]: Boards,
+  [TrainingModuleIcon.CFA_ICON_BOILED_EGGS]: BoiledEggs,
+  [TrainingModuleIcon.CFA_ICON_BOTTLED_SAUCE]: BottledSauce,
+  [TrainingModuleIcon.CFA_ICON_BOWL]: Bowl,
+  [TrainingModuleIcon.CFA_ICON_BREADING]: Breading,
+  [TrainingModuleIcon.CFA_ICON_BREADING_RIGHT]: BreadingRight,
+  [TrainingModuleIcon.CFA_ICON_BREADING_TABLE]: BreadingTable,
+  [TrainingModuleIcon.CFA_ICON_CATERING]: Catering,
+  [TrainingModuleIcon.CFA_ICON_CHEESE]: Cheese,
+  [TrainingModuleIcon.CFA_ICON_CHICKEN_NOODLE]: ChickenNoodle,
+  [TrainingModuleIcon.CFA_ICON_CHICKEN_SANDWICH]: ChickenSandwich,
+  [TrainingModuleIcon.CFA_ICON_CHICKEN_TRANSFER]: ChickenTransfer,
+  [TrainingModuleIcon.CFA_ICON_CHICKFILA]: Chickfila,
+  [TrainingModuleIcon.CFA_ICON_CHILLED_GRILLED]: ChilledGrilled,
+  [TrainingModuleIcon.CFA_ICON_CHOPPING_ROMAINE_LETTUCE]:
+    Chopping_Romaine_Lettuce,
+  [TrainingModuleIcon.CFA_ICON_CLEANING]: Cleaning,
+  [TrainingModuleIcon.CFA_ICON_CLEANING_FLOORS]: CleaningFloors,
+  [TrainingModuleIcon.CFA_ICON_CLEANING_LIGHTS]: CleaningLights,
+  [TrainingModuleIcon.CFA_ICON_CLEANING_SURFACES]: CleaningSurfaces,
+  [TrainingModuleIcon.CFA_ICON_COFFEE_BREWER]: CoffeeBrewer,
+  [TrainingModuleIcon.CFA_ICON_COLD_PREP]: ColdPrep,
+  [TrainingModuleIcon.CFA_ICON_COMPLIANT_PACKAGING_3B]: CompliantPackaging3b,
+  [TrainingModuleIcon.CFA_ICON_COMPUTER]: Computer,
+  [TrainingModuleIcon.CFA_ICON_COOKIE]: Cookie,
+  [TrainingModuleIcon.CFA_ICON_CORN]: Corn,
+  [TrainingModuleIcon.CFA_ICON_COW]: Cow,
+  [TrainingModuleIcon.CFA_ICON_CUTTING_BOARDS]: CuttingBoards,
+  [TrainingModuleIcon.CFA_ICON_DINING_ROOM]: DiningRoom,
+  [TrainingModuleIcon.CFA_ICON_DISHES_HAND]: DishesHand,
+  [TrainingModuleIcon.CFA_ICON_DISHWASHER]: Dishwasher,
+  [TrainingModuleIcon.CFA_ICON_DOC]: DOC,
+  [TrainingModuleIcon.CFA_ICON_DOCUMENT]: Document,
+  [TrainingModuleIcon.CFA_ICON_DRINK_TOWER]: DrinkTower,
+  [TrainingModuleIcon.CFA_ICON_DRIVE_THRU]: DriveThru,
+  [TrainingModuleIcon.CFA_ICON_EMERGENCY_RESPONSE_PROCEDURES]:
+    EmergencyResponseProcedures,
+  [TrainingModuleIcon.CFA_ICON_FACE_TO_FACE]: FaceToFace,
+  [TrainingModuleIcon.CFA_ICON_FACILITIES]: Facilities,
+  [TrainingModuleIcon.CFA_ICON_FILET]: Filet,
+  [TrainingModuleIcon.CFA_ICON_FILET_ROLLER]: FiletRoller,
+  [TrainingModuleIcon.CFA_ICON_FLAG]: Flag,
+  [TrainingModuleIcon.CFA_ICON_FOOD_SAFETY]: FoodSafety,
+  [TrainingModuleIcon.CFA_ICON_FRONT_COUNTER]: FrontCounter,
+  [TrainingModuleIcon.CFA_ICON_FROSTED_BEVERAGE]: FrostedBeverage,
+  [TrainingModuleIcon.CFA_ICON_GARBAGE]: Garbage,
+  [TrainingModuleIcon.CFA_ICON_GHS_HAZARD]: GHSHazard,
+  [TrainingModuleIcon.CFA_ICON_GREEN_LEAF]: GreenLeaf,
+  [TrainingModuleIcon.CFA_ICON_GRILLED_CHICKEN_FILET_SAMPLE]:
+    GrilledChickenFiletSample,
+  [TrainingModuleIcon.CFA_ICON_GRILLED_FILET]: GrilledFilet,
+  [TrainingModuleIcon.CFA_ICON_GRILLED_NUGGETS]: GrilledNuggets,
+  [TrainingModuleIcon.CFA_ICON_GRILL_GARLAND]: GrillGarland,
+  [TrainingModuleIcon.CFA_ICON_HANDLING_RAW_PROTEINS_SAFELY]:
+    Handling_Raw_Proteins_Safely,
+  [TrainingModuleIcon.CFA_ICON_HANDWASHING]: Handwashing,
+  [TrainingModuleIcon.CFA_ICON_HOLDING_REQUIREMENTS]: HoldingRequirements,
+  [TrainingModuleIcon.CFA_ICON_HOSPITALITY]: Hospitality,
+  [TrainingModuleIcon.CFA_ICON_ICE_BATH_BREADING]: IceBathBreading,
+  [TrainingModuleIcon.CFA_ICON_ICED_COFFEE]: IcedCoffee,
+  [TrainingModuleIcon.CFA_ICON_ICE_DREAM]: IceDream,
+  [TrainingModuleIcon.CFA_ICON_ICEDREAM_MACHINE]: IcedreamMachine,
+  [TrainingModuleIcon.CFA_ICON_ICE_MACHINE]: IceMachine,
+  [TrainingModuleIcon.CFA_ICON_KIDS_MEAL]: KidsMeal,
+  [TrainingModuleIcon.CFA_ICON_LEAN_PROCESS]: LeanProcess,
+  [TrainingModuleIcon.CFA_ICON_LEMONADE_DISPENSER]: LemonadeDispenser,
+  [TrainingModuleIcon.CFA_ICON_LEMONS]: Lemons,
+  [TrainingModuleIcon.CFA_ICON_LETTUCE_CABBAGE]: LettuceCabbage,
+  [TrainingModuleIcon.CFA_ICON_LETTUCE_WRAP_SANDWICH]: LettuceWrapSandwich,
+  [TrainingModuleIcon.CFA_ICON_MAC_AND_CHEESE_SAMPLE]: MacAndCheeseSample,
+  [TrainingModuleIcon.CFA_ICON_MAC_N_CHEESE]: MacNCheese,
+  [TrainingModuleIcon.CFA_ICON_MARKETING]: Marketing,
+  [TrainingModuleIcon.CFA_ICON_MEAL]: Meal,
+  [TrainingModuleIcon.CFA_ICON_MEASURING]: Measuring,
+  [TrainingModuleIcon.CFA_ICON_MERCO_HOLDING]: MercoHolding,
+  [TrainingModuleIcon.CFA_ICON_MILKSHAKE]: Milkshake,
+  [TrainingModuleIcon.CFA_ICON_MILKSHAKE_BASE_DISPENSER]:
+    MilkshakeBaseDispenser,
+  [TrainingModuleIcon.CFA_ICON_MILKSHAKE_PEACH]: MilkshakePeach,
+  [TrainingModuleIcon.CFA_ICON_MILK_WASH]: MilkWash,
+  [TrainingModuleIcon.CFA_ICON_MIXER_SHREDDER]: MixerShredder,
+  [TrainingModuleIcon.CFA_ICON_MOBILE_ORDERING]: MobileOrdering,
+  [TrainingModuleIcon.CFA_ICON_NUGGETS]: Nuggets,
+  [TrainingModuleIcon.CFA_ICON_OPERATIONAL_REQUIREMENTS_GUIDE]:
+    OperationalRequirementsGuide,
+  [TrainingModuleIcon.CFA_ICON_OVEN]: Oven,
+  [TrainingModuleIcon.CFA_ICON_PACKAGING_AND_TRANSPORTING_PRODUCE]:
+    PackagingAndTransportingProduce,
+  [TrainingModuleIcon.CFA_ICON_PASS_THRU]: PassThru,
+  [TrainingModuleIcon.CFA_ICON_PATHWAY]: Pathway,
+  [TrainingModuleIcon.CFA_ICON_PAYMENT]: Payment,
+  [TrainingModuleIcon.CFA_ICON_PHYSICAL_SAFETY]: PhysicalSafety,
+  [TrainingModuleIcon.CFA_ICON_PINEAPPLE_DRAGONFRUIT_CLEAR_CUP]:
+    PineappleDragonfruitClearCup,
+  [TrainingModuleIcon.CFA_ICON_PITCO_REDUCED_SIZE]: PITCO_Reduced_Size,
+  [TrainingModuleIcon.CFA_ICON_POTATO_FRYER]: PotatoFryer,
+  [TrainingModuleIcon.CFA_ICON_PRESSURE_FRYER]: PressureFryer,
+  [TrainingModuleIcon.CFA_ICON_PRETZEL_CHEDDAR_CLUB]: Pretzel_Cheddar_Club,
+  [TrainingModuleIcon.CFA_ICON_PRINCE_CASTLE]: PrinceCastle,
+  [TrainingModuleIcon.CFA_ICON_PRODUCE]: Produce,
+  [TrainingModuleIcon.CFA_ICON_QUALITY_PHOTOS]: QualityPhotos,
+  [TrainingModuleIcon.CFA_ICON_RANDELL]: Randell,
+  [TrainingModuleIcon.CFA_ICON_RAW_CHICKEN]: RawChicken,
+  [TrainingModuleIcon.CFA_ICON_RAW_GRILLED_FILET]: RawGrilledFilet,
+  [TrainingModuleIcon.CFA_ICON_RAW_GRILLED_NUGGETS]: RawGrilledNuggets,
+  [TrainingModuleIcon.CFA_ICON_RECENTLY_UPDATED]: RecentlyUpdated,
+  [TrainingModuleIcon.CFA_ICON_REFRIGERATOR]: Refrigerator,
+  [TrainingModuleIcon.CFA_ICON_RESTAURANT_EXTERIOR]: RestaurantExterior,
+  [TrainingModuleIcon.CFA_ICON_RESTROOMS]: Restrooms,
+  [TrainingModuleIcon.CFA_ICON_ROMAINE]: Romaine,
+  [TrainingModuleIcon.CFA_ICON_SABER_SLICER]: SaberSlicer,
+  [TrainingModuleIcon.CFA_ICON_SALAD_PREP_TABLE]: SaladPrepTable,
+  [TrainingModuleIcon.CFA_ICON_SALADS]: Salads,
+  [TrainingModuleIcon.CFA_ICON_SAMPLES_DRINKS]: SamplesDrinks,
+  [TrainingModuleIcon.CFA_ICON_SAMPLES_FOOD]: SamplesFood,
+  [TrainingModuleIcon.CFA_ICON_SEASONAL_FALL]: SeasonalFall,
+  [TrainingModuleIcon.CFA_ICON_SEASONAL_SUMMER]: SeasonalSummer,
+  [TrainingModuleIcon.CFA_ICON_SECURITY]: Security,
+  [TrainingModuleIcon.CFA_ICON_SIGNAL]: Signal,
+  [TrainingModuleIcon.CFA_ICON_SINK_COMPARTMENT]: SinkCompartment,
+  [TrainingModuleIcon.CFA_ICON_SINKS]: Sinks,
+  [TrainingModuleIcon.CFA_ICON_STORAGE]: Storage,
+  [TrainingModuleIcon.CFA_ICON_STRAWBERRY_HIBISCUS]: StrawberryHibiscus,
+  [TrainingModuleIcon.CFA_ICON_STRIPS]: Strips,
+  [TrainingModuleIcon.CFA_ICON_TEA_BREWER]: TeaBrewer,
+  [TrainingModuleIcon.CFA_ICON_TEAM_MEMBER_TALKING_POINTS]:
+    TeamMemberTalkingPoints,
+  [TrainingModuleIcon.CFA_ICON_TEA_URN]: TeaUrn,
+  [TrainingModuleIcon.CFA_ICON_THIRD_PARTY]: ThirdParty,
+  [TrainingModuleIcon.CFA_ICON_TIME_TEMP]: TimeTemp,
+  [TrainingModuleIcon.CFA_ICON_TMS]: TMS,
+  [TrainingModuleIcon.CFA_ICON_TOASTER_ROUNDUP]: ToasterRoundup,
+  [TrainingModuleIcon.CFA_ICON_TOASTING_BUNS]: Toasting_Buns,
+  [TrainingModuleIcon.CFA_ICON_TOMATOES]: Tomatoes,
+  [TrainingModuleIcon.CFA_ICON_TOWELS]: Towels,
+  [TrainingModuleIcon.CFA_ICON_TREATS_BEVERAGES]: TreatsBeverages,
+  [TrainingModuleIcon.CFA_ICON_UNIFORM]: Uniform,
+  [TrainingModuleIcon.CFA_ICON_UPSTREAM]: Upstream,
+  [TrainingModuleIcon.CFA_ICON_VENT_HOOD]: VentHood,
+  [TrainingModuleIcon.CFA_ICON_VIDEO_SEARCH_RESULT]: VideoSearchResult,
+  [TrainingModuleIcon.CFA_ICON_WAFFLE_FRIES]: WaffleFries,
+  [TrainingModuleIcon.CFA_ICON_WARMER_CHICKEN]: WarmerChicken,
+  [TrainingModuleIcon.CFA_ICON_WARMER_RECTANGLE]: WarmerRectangle,
+  [TrainingModuleIcon.CFA_ICON_WARMING_DRAWER]: WarmingDrawer,
+  [TrainingModuleIcon.CFA_ICON_WHED]: WHED,
+  [TrainingModuleIcon.CFA_ICON_WHY_NOT_YOUR_BEST]: WhyNotYourBest,
 };
 
-export const PATHWAY_ICON_CATEGORIES: PathwayIconCategory[] = catalog.categories
+export const MODULE_ICON_CATEGORIES: ModuleIconCategory[] = catalog.categories
   .map((category) => ({
     ...category,
-    icons: category.icons.filter((icon) => PATHWAY_ICON_COMPONENTS[icon]),
+    icons: category.icons.filter(
+      (icon): icon is TrainingModuleIcon => icon in MODULE_ICON_COMPONENTS,
+    ),
   }))
   .filter((category) => category.icons.length > 0);
 
-export function getPathwayIconFilename(icon: string): string {
-  if (!icon) return "";
-  const filename = icon.includes("/")
-    ? icon.substring(icon.lastIndexOf("/") + 1)
-    : icon;
-  try {
-    return decodeURIComponent(filename);
-  } catch {
-    return filename;
+export function getModuleIconLabel(icon: string): string {
+  if (icon in TrainingModuleIconLabels) {
+    return TrainingModuleIconLabels[icon as TrainingModuleIcon];
   }
+  return "";
 }

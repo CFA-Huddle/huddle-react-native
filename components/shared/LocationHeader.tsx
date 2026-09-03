@@ -4,12 +4,16 @@ import Skeleton from "@/components/ui/Skeleton";
 import { Colors, TextStyles } from "@/constants/theme";
 import { useLocationContext } from "@/context/LocationContext";
 import { LocationLabels } from "@/types/Location";
+import { DeviceType, deviceType } from "expo-device";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const LocationHeader: React.FC = () => {
+    const isDesktop = deviceType === DeviceType.DESKTOP;
+    const styles = makeStyles(isDesktop);
+    
     const { selectedLocation, locations } = useLocationContext();
-
+    
     if (!selectedLocation) return (
         <View style={styles.container}>
             <View style={styles.locationContainer}>
@@ -44,7 +48,7 @@ const LocationHeader: React.FC = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (isDesktop: boolean) => StyleSheet.create({
     locationContainer: {
         width: "100%",
         flexDirection: "row",
@@ -54,7 +58,7 @@ const styles = StyleSheet.create({
     },
     container: {
         width: "100%",
-        paddingTop: 64,
+        paddingTop: isDesktop ? 0 : 64,
         padding: 12,
         backgroundColor: Colors.headerBackground,
         justifyContent: "center",

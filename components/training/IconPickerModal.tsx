@@ -1,222 +1,139 @@
-import PathwayIcon from "@/components/training/PathwayIcon";
-import { getPathwayIconFilename, PATHWAY_ICON_CATEGORIES } from "@/constants/pathwayIcons";
-import { Apercu, Colors, TextStyles } from "@/constants/theme";
-import {
-  BottomSheetModal,
-  BottomSheetSectionList,
-  TouchableOpacity,
-} from "@gorhom/bottom-sheet";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import IconPicker from "@/components/training/IconPicker";
+import Button from "@/components/ui/Button";
+import CloseButton from "@/components/ui/CloseButton";
+import { getModuleIconLabel } from "@/constants/moduleIcons";
+import { Apercu, Colors } from "@/constants/theme";
+import { useEffect, useRef, useState } from "react";
+import { LayoutChangeEvent, Modal, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import CloseButton from "../ui/CloseButton";
 
-const ICON_COLUMNS = 4;
-const ICON_GAP = 10;
-const FADE_HEIGHT = 28;
-const SNAP_POINTS = ["80%"];
-const FADE_TRANSPARENT = "rgba(247, 247, 247, 0)";
-
-type IconSection = {
-  title: string;
-  data: string[][];
-};
+const WIDE_WINDOW_BREAKPOINT = 600;
 
 interface IconPickerModalProps {
-  ref: React.RefObject<BottomSheetModal | null>;
+  visible: boolean;
   selectedIcon?: string;
   onSelect: (icon: string) => void;
-}
-
-function chunkIcons(icons: string[], size: number) {
-  const rows: string[][] = [];
-  for (let i = 0; i < icons.length; i += size) {
-    rows.push(icons.slice(i, i + size));
-  }
-  return rows;
+  onClose: () => void;
 }
 
 export default function IconPickerModal({
-  ref,
+  visible,
   selectedIcon,
   onSelect,
+  onClose,
 }: IconPickerModalProps) {
   const insets = useSafeAreaInsets();
-  const selectedFilename = getPathwayIconFilename(selectedIcon ?? "");
+  const { width: windowWidth } = useWindowDimensions();
+  const pendingWidthRef = useRef(0);
+  const isShownRef = useRef(false);
+  const [draft, setDraft] = useState(selectedIcon ?? "");
+  const [sheetWidth, setSheetWidth] = useState(0);
+  const isWideWindow = windowWidth > WIDE_WINDOW_BREAKPOINT;
 
-  const sections = useMemo<IconSection[]>(
-    () =>
-      PATHWAY_ICON_CATEGORIES.map((category) => ({
-        title: category.name,
-        data: chunkIcons(category.icons, ICON_COLUMNS),
-      })),
-    []
-  );
-
-  const handleClose = () => {
-    ref.current?.dismiss();
+  const commitWidth = (width: number) => {
+    if (width <= 0) return;
+    setSheetWidth((current) => (current === width ? current : width));
   };
 
-  const handleSelect = (icon: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onSelect(icon);
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const nextWidth = event.nativeEvent.layout.width;
+    if (nextWidth <= 0) return;
+
+    pendingWidthRef.current = nextWidth;
+
+    // Wide page sheets (macOS) layout at window width before settling.
+    // Wait until the modal has finished presenting so the first paint
+    // uses the real sheet width.
+    if (isWideWindow && !isShownRef.current) {
+      return;
+    }
+
+    commitWidth(nextWidth);
+  };
+
+  const handleShow = () => {
+    isShownRef.current = true;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const width = pendingWidthRef.current;
+        const looksLikeWindow =
+          isWideWindow && Math.abs(width - windowWidth) < 1;
+
+        // Keep a previously settled width if this is still the transient
+        // full-window measurement. The real sheet onLayout will follow.
+        if (looksLikeWindow && sheetWidth > 0) {
+          return;
+        }
+
+        commitWidth(width);
+      });
+    });
+  };
+
+  useEffect(() => {
+    if (!visible) {
+      isShownRef.current = false;
+    }
+  }, [visible]);
+
+  const handleContinue = () => {
+    if (!draft) return;
+    onSelect(draft);
+    onClose();
   };
 
   return (
-    <BottomSheetModal
-      ref={ref}
-      snapPoints={SNAP_POINTS}
-      enableDynamicSizing={false}
-      enableOverDrag={false}
-      enablePanDownToClose
-      handleIndicatorStyle={styles.handleIndicator}
-      backgroundStyle={styles.background}
-      style={styles.modal}
+    <Modal
+      visible={visible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+      allowSwipeDismissal
+      onShow={handleShow}
+      onRequestClose={onClose}
     >
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Select Icon</Text>
-        <CloseButton style={styles.closeButton} onPress={handleClose} />
+      <View style={styles.container} onLayout={handleLayout}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Select Icon</Text>
+          <CloseButton style={styles.closeButton} onPress={onClose} />
+        </View>
+        <IconPicker width={sheetWidth} selectedIcon={draft} onSelect={setDraft} />
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+          <Button
+            text={draft ? `Select "${getModuleIconLabel(draft)}"` : "Select Icon"}
+            onPress={handleContinue}
+            disabled={!draft}
+          />
+        </View>
       </View>
-      <View style={styles.listContainer}>
-        <LinearGradient
-          colors={[Colors.background, FADE_TRANSPARENT]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          pointerEvents="none"
-          style={styles.topFade}
-        />
-        <BottomSheetSectionList
-          style={styles.list}
-          sections={sections}
-          contentContainerStyle={{
-            paddingHorizontal: 20,
-            paddingBottom: insets.bottom + 20,
-          }}
-          keyExtractor={(item, index) => `${item.join("|")}-${index}`}
-          stickySectionHeadersEnabled={false}
-          initialNumToRender={6}
-          windowSize={8}
-          renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.sectionHeader}>{title}</Text>
-          )}
-          renderItem={({ item }) => (
-            <View style={styles.row}>
-              {item.map((icon) => {
-                const selected = selectedFilename === icon;
-                return (
-                  <TouchableOpacity
-                    key={icon}
-                    style={[styles.icon, selected && styles.cellSelected]}
-                    onPress={() => handleSelect(icon)}
-                    activeOpacity={0.6}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected }}
-                    accessibilityLabel={icon.replace(/\.svg$/i, "").replace(/[_-]+/g, " ")}
-                  >
-                    <PathwayIcon icon={icon} size={40} />
-                  </TouchableOpacity>
-                );
-              })}
-              {Array.from({ length: ICON_COLUMNS - item.length }).map((_, index) => (
-                <View key={`spacer-${index}`} style={styles.cellSpacer} />
-              ))}
-            </View>
-          )}
-          ItemSeparatorComponent={() => <View style={{ height: ICON_GAP }} />}
-        />
-        <LinearGradient
-          colors={[FADE_TRANSPARENT, Colors.background]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          pointerEvents="none"
-          style={styles.bottomFade}
-        />
-      </View>
-    </BottomSheetModal>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
-    backgroundColor: Colors.background,
-  },
-  modal: {
-      shadowColor: "#000",
-      shadowOffset: {
-          width: 0,
-          height: 5,
-      },
-      shadowOpacity: 0.34,
-      shadowRadius: 6.27,
-
-      elevation: 10,
-  },
-  handleIndicator: {
-      width: 24,
-      height: 4,
-      borderRadius: 2.5,
-      backgroundColor: Colors.secondary,
+  container: {
+    flex: 1,
+    backgroundColor: Colors.card,
   },
   header: {
     width: "100%",
-    paddingHorizontal: 20,
-    marginBottom: 12,
+    height: 66,
     justifyContent: "center",
-    minHeight: 34,
-  },
-  listContainer: {
-    flex: 1,
-  },
-  list: {
-    flex: 1,
-  },
-  topFade: {
-    height: FADE_HEIGHT,
-    marginBottom: -FADE_HEIGHT,
-    zIndex: 1,
-  },
-  bottomFade: {
-    height: FADE_HEIGHT,
-    marginTop: -FADE_HEIGHT,
-    zIndex: 1,
+    alignItems: "center",
   },
   headerText: {
     fontFamily: Apercu.bold,
-    fontSize: 20,
+    fontSize: 16,
     color: Colors.textPrimary,
     letterSpacing: -0.32,
   },
   closeButton: {
     position: "absolute",
-    top: -7,
-    right: 20,
+    top: 16,
+    right: 16,
   },
-  sectionHeader: {
-    fontSize: TextStyles.title.fontSize,
-    fontFamily: TextStyles.title.fontFamily,
-    color: TextStyles.subTitle.color,
-    marginTop: 16,
-    marginBottom: 12,
-  },
-  row: {
-    flexDirection: "row",
-    gap: ICON_GAP,
-  },
-  icon: {
-    flex: 1,
-    aspectRatio: 1,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "transparent",
-  },
-  cellSelected: {
-    borderColor: Colors.primary,
-  },
-  cellSpacer: {
-    flex: 1,
+  footer: {
+    paddingHorizontal: 10,
+    paddingTop: 12,
   },
 });

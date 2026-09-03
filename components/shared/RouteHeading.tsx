@@ -8,7 +8,7 @@ interface RouteHeadingProps {
 }
 
 const RouteHeading: React.FC<RouteHeadingProps> = ({ children, style }) => {
-  return <Text style={styles.text}>{children}</Text>;
+  return <Text style={[styles.text, style]}>{children}</Text>;
 };
 
 const styles = StyleSheet.create({

@@ -1,19 +1,17 @@
 import {
-  getPathwayIconFilename,
-  PATHWAY_ICON_COMPONENTS,
-} from "@/constants/pathwayIcons";
+  MODULE_ICON_COMPONENTS,
+  TrainingModuleIcon,
+} from "@/constants/moduleIcons";
 import { Image } from "expo-image";
 import { View } from "react-native";
 
-interface PathwayIconProps {
+interface ModuleIconProps {
   icon: string;
   size?: number;
 }
 
-export default function PathwayIcon({ icon, size = 40 }: PathwayIconProps) {
-  const filename = getPathwayIconFilename(icon);
-
-  const Icon = PATHWAY_ICON_COMPONENTS[filename];
+export default function ModuleIcon({ icon, size = 40 }: ModuleIconProps) {
+  const Icon = MODULE_ICON_COMPONENTS[icon as TrainingModuleIcon];
 
   if (Icon) {
     return <Icon width={size} height={size} />;
